@@ -17,7 +17,9 @@ namespace CVManager.DAL.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=blogsAndpostsDB;TrustServerCertificate=True;Trusted_Connection=True;");
+            //Connection strängen till vår sql server databas 
+
+            //optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=blogsAndpostsDB;TrustServerCertificate=True;Trusted_Connection=True;");
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

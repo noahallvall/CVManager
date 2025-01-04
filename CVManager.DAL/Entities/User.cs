@@ -3,10 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace CVManager.DAL.Entities
 {
-    internal class User
+    public class User 
     {
+        public int UserID { get; set; }
+
+        public string FirstName { get; set; }    
+
+        public bool IsPrivateProfile { get; set; }
+
+        //Foreign key
+        public int CVId { get; set; }
     }
 }

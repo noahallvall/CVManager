@@ -1,25 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using CVManager.DAL.Entities;
 
 namespace CVManager.DAL.Context
 {
-
-    public class BloggingContext : DbContext
+    public class CVContext : IdentityDbContext
     {
-        //public DbSet<Blog> Blogs { get; set; }
-        //public DbSet<Post> Posts { get; set; }
+        public DbSet<CV> CVs { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public CVContext(DbContextOptions<CVContext> options)
+           : base(options)
         {
-            //Connection strängen till vår sql server databas 
-
-            //optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=blogsAndpostsDB;TrustServerCertificate=True;Trusted_Connection=True;");
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -27,5 +19,4 @@ namespace CVManager.DAL.Context
             configurationBuilder.Conventions.Remove(typeof(TableNameFromDbSetConvention));
         }
     }
-
 }

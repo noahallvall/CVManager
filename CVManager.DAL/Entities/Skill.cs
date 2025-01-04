@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace CVManager.DAL.Entities
 {
-    internal class Skill
+    public class Skill
     {
+        public int SkillId { get; set; }
+
+
+        // Foreign Key to CV
+        public int CVId { get; set; }
     }
 }

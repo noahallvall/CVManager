@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CVManager.DAL.Entities
 {
-    internal class CVProject
+    public class CVProject
     {
     }
 }

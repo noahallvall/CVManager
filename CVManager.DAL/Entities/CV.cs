@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace CVManager.DAL.Entities
 {
-    internal class CV
+   public class CV
     {
+        public int CVId { get; set; }
+        public string ProfilePicturePath { get; set; }
+        public string Summary { get; set; }
+        public string ContactInformation { get; set; }
+
+
+        public virtual ICollection<Skill> Skills { get; set; }
+        public virtual ICollection<Experience> Experiences { get; set; }
+        public virtual ICollection<Education> Educations { get; set; }
+
     }
 }

@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace CVManager.DAL.Entities
 {
-    internal class Message
+    public class Message
     {
-        //
+        public int MessageId { get; set; }
+
+
+
+        // Foreign Key to CV
+        public int CVId { get; set; }
     }
 }

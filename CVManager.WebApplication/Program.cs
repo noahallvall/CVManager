@@ -1,7 +1,13 @@
+using CVManager.DAL.Context;
+using CVManager.DAL.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddIdentityApiEndpoints<User>()
+                .AddEntityFrameworkStores<CVContext>();
 
 var app = builder.Build();
 
@@ -15,6 +21,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapGroup("/identity")
+   .MapIdentityApi<User>();
 
 app.MapControllerRoute(
     name: "default",

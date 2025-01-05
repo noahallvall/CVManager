@@ -5,16 +5,6 @@ using CVManager.DAL.Entities;
 
 namespace CVManager.DAL.Context
 {
-
-    public class GameStoreContext(DbContextOptions<GameStoreContext> options)
-    : IdentityDbContext<User>(options)
-    {
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-        }
-    }
-
     public class CVContext(DbContextOptions<CVContext> options) : IdentityDbContext<User>(options)
     {
         public DbSet<CV> CVs { get; set; }

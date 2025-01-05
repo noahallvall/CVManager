@@ -9,6 +9,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddIdentityApiEndpoints<User>()
                 .AddEntityFrameworkStores<CVContext>();
 
+var connString = builder.Configuration.GetConnectionString("CVContext");
+builder.Services.AddSqlServer<CVContext>(connString);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CVManager.DAL.Entities
 {
-    public class User 
+    public class User : IdentityUser
     {
-        public int UserID { get; set; }
+        //public int UserID { get; set; }
 
         public string FirstName { get; set; }    
 

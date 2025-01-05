@@ -5,13 +5,23 @@ using CVManager.DAL.Entities;
 
 namespace CVManager.DAL.Context
 {
-    public class CVContext : IdentityDbContext
+
+    public class GameStoreContext(DbContextOptions<GameStoreContext> options)
+    : IdentityDbContext<User>(options)
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+
+    public class CVContext(DbContextOptions<CVContext> options) : IdentityDbContext<User>(options)
     {
         public DbSet<CV> CVs { get; set; }
 
-        public CVContext(DbContextOptions<CVContext> options)
-           : base(options)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

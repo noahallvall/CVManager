@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +16,7 @@ namespace CVManager.DAL.Entities
 
         public bool IsPrivateProfile { get; set; }
 
-        //Foreign key
-        public int CVId { get; set; }
+        public CV? CV { get; set; }
+
     }
 }

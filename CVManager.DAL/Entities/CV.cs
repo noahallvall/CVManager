@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,8 @@ namespace CVManager.DAL.Entities
         public virtual ICollection<Skill> Skills { get; set; }
         public virtual ICollection<Experience> Experiences { get; set; }
         public virtual ICollection<Education> Educations { get; set; }
+
+        public User User { get; set; } = null!;
 
     }
 }

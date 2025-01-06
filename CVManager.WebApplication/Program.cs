@@ -25,6 +25,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseAuthentication();
+
 app.MapGroup("/identity")
    .MapIdentityApi<User>();
 

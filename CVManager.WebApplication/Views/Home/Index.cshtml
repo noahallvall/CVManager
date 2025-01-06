@@ -6,3 +6,12 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<form method="post" asp-controller="Account" asp-action="LoggaUt">
+    <AuthorizeView>
+        <Authorized>
+            <h2>Inloggad btich som @User.Identity.Name</h2>
+            <input type="submit" value="Logga ut" />
+        </Authorized>
+    </AuthorizeView>
+</form>

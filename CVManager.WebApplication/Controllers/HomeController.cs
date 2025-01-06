@@ -1,6 +1,9 @@
 using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CVManager.WebApplication.Controllers
 {
@@ -12,6 +15,8 @@ namespace CVManager.WebApplication.Controllers
         {
             _logger = logger;
         }
+
+        [Authorize]
 
         public IActionResult Index()
         {

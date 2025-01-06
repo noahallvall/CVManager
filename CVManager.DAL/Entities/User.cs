@@ -10,7 +10,7 @@ namespace CVManager.DAL.Entities
 {
     public class User : IdentityUser
     {
-        //public int UserID { get; set; }
+        public int Id { get; set; }
 
         public string FirstName { get; set; }    
 

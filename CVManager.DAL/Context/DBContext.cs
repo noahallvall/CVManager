@@ -15,7 +15,7 @@ namespace CVManager.DAL.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            // Mapping User  to CV
+            // Mapping User to CV 1 to 1 relationship
             modelBuilder.Entity<User>()
                 .HasOne(e => e.CV)
                 .WithOne(e => e.User)

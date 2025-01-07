@@ -10,7 +10,12 @@ namespace CVManager.DAL.Entities
 {
     public class User : IdentityUser
     {
+
         public int Id { get; set; }
+
+        public CV? CV { get; set; }
+
+        public bool IsPrivateProfile {  get; set; }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -19,10 +24,6 @@ namespace CVManager.DAL.Entities
         public string Email { get; set; }
 
         public string Phone { get; set; }
-
-        public bool IsPrivateProfile { get; set; }
-
-        public CV? CV { get; set; }
 
     }
 }

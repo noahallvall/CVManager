@@ -10,6 +10,7 @@ namespace CVManager.WebApplication.Models
         public string AnvandarNamn {  get; set; }
 
         [Required(ErrorMessage = "Vänligen skriv ett lösenord.")]
+        [DataType(DataType.Password)]
 
         public string Losenord { get; set; }
 

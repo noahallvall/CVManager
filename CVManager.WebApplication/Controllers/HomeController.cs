@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace CVManager.WebApplication.Controllers
 {
     public class HomeController : Controller
     {
+        
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -18,6 +20,7 @@ namespace CVManager.WebApplication.Controllers
 
         public IActionResult Index()
         {
+
             return View();
         }
 
@@ -25,6 +28,8 @@ namespace CVManager.WebApplication.Controllers
         {
             return View();
         }
+
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -10,7 +10,7 @@
 <form method="post" asp-controller="Account" asp-action="LoggaUt">
     <AuthorizeView>
         <Authorized>
-            <h2>Inloggad btich som @User.Identity.Name</h2>
+            <h2>Inloggad som @User.Identity.Name</h2>
             <input type="submit" value="Logga ut" />
         </Authorized>
     </AuthorizeView>

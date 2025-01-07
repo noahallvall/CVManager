@@ -1,4 +1,5 @@
-﻿using CVManager.DAL.Entities;
+﻿using System.Diagnostics;
+using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,16 +12,18 @@ namespace CVManager.WebApplication.Controllers
     {
         private UserManager<User> userManager;
         private SignInManager<User> signInManager;
+        private ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr)
+        public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr, ILogger<AccountController> logger)
         {
             this.userManager = userMngr;
             this.signInManager = signInMngr;
+            this._logger = logger;
         }
 
         [HttpGet]
 
-        public IActionResult Login()
+        public IActionResult LogIn()
         {
             LoginViewModel loginViewModel = new LoginViewModel();
             return View(loginViewModel);
@@ -64,6 +67,7 @@ namespace CVManager.WebApplication.Controllers
 
                 if (result.Succeeded)
                 {
+                    Debug.WriteLine("Det gick");
                     await signInManager.SignInAsync(user, isPersistent: true);
                     return RedirectToAction("Index", "Home");
                 }

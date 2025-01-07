@@ -50,11 +50,6 @@ namespace CVManager.DAL.Context
                 new CV
                 {
                     CVId = 1,
-                    FirstName = "Clark",
-                    LastName = "Smith",
-                    Address = "Storgatan 3",
-                    Email = "ClarkS@gmail.com",
-                    Phone = "7329329932",
                     Summary = "Clark är en rolig grabb"
                 }
                 );

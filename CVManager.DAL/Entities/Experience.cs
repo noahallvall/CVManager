@@ -10,6 +10,10 @@ namespace CVManager.DAL.Entities
     {
         public int ExperienceId { get; set; }
 
+        public string CompanyName { get; set; }
+
+        public string Role { get; set; }   
+
 
 
         // Foreign Key to CV

@@ -4,6 +4,7 @@ using CVManager.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVManager.DAL.Migrations
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20250107104620_init2")]
+    partial class init2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,21 +55,6 @@ namespace CVManager.DAL.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("CV");
-                });
-
-            modelBuilder.Entity("CVManager.DAL.Entities.CVProject", b =>
-                {
-                    b.Property<int>("CVId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CVId", "ProjectId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("CVProject");
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Education", b =>
@@ -119,27 +107,6 @@ namespace CVManager.DAL.Migrations
                     b.HasIndex("CVId");
 
                     b.ToTable("Experience");
-                });
-
-            modelBuilder.Entity("CVManager.DAL.Entities.Project", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"));
-
-                    b.Property<string>("ProjectDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProjectName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProjectId");
-
-                    b.ToTable("Project");
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Skill", b =>
@@ -378,25 +345,6 @@ namespace CVManager.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CVManager.DAL.Entities.CVProject", b =>
-                {
-                    b.HasOne("CVManager.DAL.Entities.CV", "CV")
-                        .WithMany("CVProjects")
-                        .HasForeignKey("CVId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CVManager.DAL.Entities.Project", "Project")
-                        .WithMany("CVProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CV");
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("CVManager.DAL.Entities.Education", b =>
                 {
                     b.HasOne("CVManager.DAL.Entities.CV", null)
@@ -477,18 +425,11 @@ namespace CVManager.DAL.Migrations
 
             modelBuilder.Entity("CVManager.DAL.Entities.CV", b =>
                 {
-                    b.Navigation("CVProjects");
-
                     b.Navigation("Educations");
 
                     b.Navigation("Experiences");
 
                     b.Navigation("Skills");
-                });
-
-            modelBuilder.Entity("CVManager.DAL.Entities.Project", b =>
-                {
-                    b.Navigation("CVProjects");
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.User", b =>

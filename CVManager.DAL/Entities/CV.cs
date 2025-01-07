@@ -20,6 +20,9 @@ namespace CVManager.DAL.Entities
         public virtual ICollection<Education> Educations { get; set; }
 
         public User User { get; set; } = null!;
+        
+        //För att kunna navigera många till många förhållandet. cv - cvproject - project. 
+        public virtual ICollection<CVProject> CVProjects { get; set; }
 
     }
 }

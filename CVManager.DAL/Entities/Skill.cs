@@ -10,6 +10,7 @@ namespace CVManager.DAL.Entities
     {
         public int SkillId { get; set; }
 
+        public string SkillName { get; set; }
 
         // Foreign Key to CV
         public int CVId { get; set; }

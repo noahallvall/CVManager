@@ -12,7 +12,6 @@ namespace CVManager.WebApplication.Models
         [DataType(DataType.Password)]
         public string Losenord { get; set; }
 
-        [Required(ErrorMessage = "Vänligen bekräfta lösenordet.")]
         [DataType(DataType.Password)]
         [Compare("Losenord", ErrorMessage = "Lösenorden matchar inte.")]
         [Display(Name = "Bekräfta lösenordet")]

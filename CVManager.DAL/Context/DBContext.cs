@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using CVManager.DAL.Entities;
 using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Identity;
 
 namespace CVManager.DAL.Context
 {

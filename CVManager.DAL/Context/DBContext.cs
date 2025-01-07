@@ -35,6 +35,87 @@ namespace CVManager.DAL.Context
                 .HasOne(cp => cp.Project)
                 .WithMany(p => p.CVProjects)
                 .HasForeignKey(cp => cp.ProjectId);
+
+
+            modelBuilder.Entity<Project>().HasData(
+                new Project
+                {
+                    ProjectId = 1,
+                    ProjectName = "MIB",
+                    ProjectDescription = "En databas för Aliens"
+                }
+                );
+            modelBuilder.Entity<CV>().HasData(
+                new CV
+                {
+                    CVId = 1,
+                    FirstName = "Clark",
+                    LastName = "Smith",
+                    Address = "Storgatan 3",
+                    Email = "ClarkS@gmail.com",
+                    Phone = "7329329932",
+                    Summary = "Clark är en rolig grabb"
+                }
+                );
+
+            modelBuilder.Entity<Skill>().HasData(
+                new Skill
+                {
+                    SkillId = 1,
+                    SkillName = "C#",
+                    CVId = 1
+                },
+                new Skill
+                {
+                    SkillId = 2,
+                    SkillName = "JavaSript",
+                    CVId = 1
+                }
+
+                );
+            modelBuilder.Entity<Experience>().HasData(
+                new Experience
+                {
+                    ExperienceId = 1,
+                    CompanyName = "Walmart",
+                    Role = "Casher",
+                    CVId = 1
+                },
+                new Experience
+                {
+                    ExperienceId = 2,
+                    CompanyName = "Google",
+                    Role = "Programmer",
+                    CVId = 1
+                }
+            );
+
+
+            modelBuilder.Entity<Education>().HasData(
+               new Education
+               {
+                   EducationId = 1,
+                   Institution = "Orebro",
+                   EducationName = "Systemvetenskap",
+                   CVId = 1
+
+
+               },
+               new Education
+               {
+                   EducationId = 2,
+                   Institution = "KTH",
+                   EducationName = "Webbutvecklare",
+                   CVId = 1
+
+               }
+
+               );
+
+
+
+
+
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

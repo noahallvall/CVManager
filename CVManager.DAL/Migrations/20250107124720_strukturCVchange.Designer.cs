@@ -4,6 +4,7 @@ using CVManager.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVManager.DAL.Migrations
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20250107124720_strukturCVchange")]
+    partial class strukturCVchange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,18 +70,6 @@ namespace CVManager.DAL.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("CV");
-
-                    b.HasData(
-                        new
-                        {
-                            CVId = 1,
-                            Address = "Storgatan 3",
-                            Email = "ClarkS@gmail.com",
-                            FirstName = "Clark",
-                            LastName = "Smith",
-                            Phone = "7329329932",
-                            Summary = "Clark är en rolig grabb"
-                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.CVProject", b =>
@@ -120,22 +111,6 @@ namespace CVManager.DAL.Migrations
                     b.HasIndex("CVId");
 
                     b.ToTable("Education");
-
-                    b.HasData(
-                        new
-                        {
-                            EducationId = 1,
-                            CVId = 1,
-                            EducationName = "Systemvetenskap",
-                            Institution = "Orebro"
-                        },
-                        new
-                        {
-                            EducationId = 2,
-                            CVId = 1,
-                            EducationName = "Webbutvecklare",
-                            Institution = "KTH"
-                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Experience", b =>
@@ -162,22 +137,6 @@ namespace CVManager.DAL.Migrations
                     b.HasIndex("CVId");
 
                     b.ToTable("Experience");
-
-                    b.HasData(
-                        new
-                        {
-                            ExperienceId = 1,
-                            CVId = 1,
-                            CompanyName = "Walmart",
-                            Role = "Casher"
-                        },
-                        new
-                        {
-                            ExperienceId = 2,
-                            CVId = 1,
-                            CompanyName = "Google",
-                            Role = "Programmer"
-                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Project", b =>
@@ -199,14 +158,6 @@ namespace CVManager.DAL.Migrations
                     b.HasKey("ProjectId");
 
                     b.ToTable("Project");
-
-                    b.HasData(
-                        new
-                        {
-                            ProjectId = 1,
-                            ProjectDescription = "En databas för Aliens",
-                            ProjectName = "MIB"
-                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Skill", b =>
@@ -229,20 +180,6 @@ namespace CVManager.DAL.Migrations
                     b.HasIndex("CVId");
 
                     b.ToTable("Skill");
-
-                    b.HasData(
-                        new
-                        {
-                            SkillId = 1,
-                            CVId = 1,
-                            SkillName = "C#"
-                        },
-                        new
-                        {
-                            SkillId = 2,
-                            CVId = 1,
-                            SkillName = "JavaSript"
-                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.User", b =>

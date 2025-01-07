@@ -10,9 +10,17 @@ namespace CVManager.DAL.Entities
    public class CV
     {
         public int CVId { get; set; }
-        public string ProfilePicturePath { get; set; }
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Address { get; set; }
+
+        public string Email { get; set; }
+
+        public string Phone { get; set; }
+        public string? ProfilePicturePath { get; set; }
         public string Summary { get; set; }
-        public string ContactInformation { get; set; }
+
 
 
         public virtual ICollection<Skill> Skills { get; set; }

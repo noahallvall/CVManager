@@ -25,6 +25,7 @@ namespace CVManager.WebApplication.Controllers
             return View(projektViewModel);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Projekt(ProjektViewModel projektViewModel)
         {
@@ -42,7 +43,7 @@ namespace CVManager.WebApplication.Controllers
 
                 var cvProject = new CVProject
                 {
-                    CVId = 1, // Glöm inte att ändra till ett cv id som är kopplat till användarens cvq!
+                    CVId = 1, // Glöm inte att ändra till ett cv id som är kopplat till användarens cv!
                     ProjectId = projekt.ProjectId
                 };
 
@@ -70,6 +71,7 @@ namespace CVManager.WebApplication.Controllers
 
             return View(allaProjekt);
         }
+
 
     }
 }

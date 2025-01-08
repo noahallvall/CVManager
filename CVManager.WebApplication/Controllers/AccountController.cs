@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Security.Claims;
+using CVManager.DAL.Context;
 using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Identity;
@@ -11,15 +13,17 @@ namespace CVManager.WebApplication.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly CVContext cVContext;
         private UserManager<User> userManager;
         private SignInManager<User> signInManager;
         private ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr, ILogger<AccountController> logger)
+        public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr, ILogger<AccountController> logger, CVContext context)
         {
             this.userManager = userMngr;
             this.signInManager = signInMngr;
             this._logger = logger;
+            cVContext = context;
         }
 
         [HttpGet]
@@ -169,6 +173,43 @@ namespace CVManager.WebApplication.Controllers
             }
 
             return View(kontoAltViewModel); 
+        }
+
+
+        [HttpGet]
+        public IActionResult CV()
+        {
+            CVViewModel cVViewModel = new CVViewModel();
+            return View(cVViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CV(CVViewModel cVViewModel)
+        {
+
+            var user = await userManager.GetUserAsync(User);
+            Console.WriteLine($"Inloggad användare: {user.UserName}");
+
+            if (ModelState.IsValid)
+            {
+                Console.WriteLine("Funkar");
+
+                
+                
+                var cv = new CV
+                {
+
+                    Summary = cVViewModel.Summary,
+                    ProfilePicturePath = cVViewModel.ProfilePicturePath,
+                    User = user
+                };
+
+                cVContext.CVs.Add(cv);
+                await cVContext.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
+            }
+            return View(cVViewModel);
         }
 
     }

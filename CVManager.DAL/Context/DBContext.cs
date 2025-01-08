@@ -52,7 +52,8 @@ namespace CVManager.DAL.Context
                 new CV
                 {
                     CVId = 1,
-                    Summary = "Clark är en rolig grabb"
+                    Summary = "Clark är en rolig grabb",
+                    UserId = "ebca9091-87b4-440f-ae6f-7cc292271074"
                 }
                 );
 

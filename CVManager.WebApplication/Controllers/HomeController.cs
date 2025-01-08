@@ -31,17 +31,19 @@ namespace CVManager.WebApplication.Controllers
 
 
             // Hämta data från databasen
-            var cvList = CVContext.CVs
+            var PublicCVinfo = CVContext.CVs
                 .Include(cv => cv.User) // Ladda användarinformation
                 .Include(cv => cv.CVProjects) // Ladda sambandstabellen
                 .ThenInclude(cp => cp.Project) // Ladda kopplade projekt
+                //Hämtar alla info där en profil angetts vara offentlig
+                .Where(cv => cv.User.IsPrivateProfile == false)
                 .ToList();
 
             // Skapa och fyll HomeViewModel
             var homeViewModel = new HomeViewModel
             {
-                CVs = cvList,
-                Projects = cvList.SelectMany(cv => cv.CVProjects.Select(cp => cp.Project)).ToList()
+                CVs = PublicCVinfo,
+                Projects = PublicCVinfo.SelectMany(cv => cv.CVProjects.Select(cp => cp.Project)).ToList()
             };
         
 

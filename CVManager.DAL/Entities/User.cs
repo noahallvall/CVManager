@@ -10,7 +10,14 @@ namespace CVManager.DAL.Entities
 {
     public class User : IdentityUser
     {
-
+        public User() 
+        {
+            FirstName = "Pepega";
+            LastName = "Pepega";
+            Address = "Pepegatan 13";
+            Email = "Gooner@gmail.com";
+            Phone = "1234567890";
+        }
         public int Id { get; set; }
 
         public CV? CV { get; set; }

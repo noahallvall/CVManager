@@ -4,6 +4,7 @@ using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace CVManager.WebApplication.Controllers
@@ -87,9 +88,86 @@ namespace CVManager.WebApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult KontoAlt()
+        public async Task<IActionResult> KontoAlt()
         {
-            return View();
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                Console.WriteLine("Användare ej inloggad");
+            }
+
+            KontoAltViewModel kontoAltViewModel = new KontoAltViewModel
+            {
+                FirstName = user?.FirstName,
+                LastName = user?.LastName,
+                Address = user?.Address,
+                Email = user?.Email,
+                Phone = user?.Phone
+                
+            };
+
+            return View(kontoAltViewModel);
         }
+
+        [HttpPost]
+
+        public async Task<IActionResult> KontoAlt(KontoAltViewModel kontoAltViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(kontoAltViewModel);
+            }
+
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var passwordCheck = await userManager.CheckPasswordAsync(user, kontoAltViewModel.CurrentPassword);
+            if (!passwordCheck)
+            {
+                ModelState.AddModelError("CurrentPassword", "Nuvarande lösenord är felinmatat.");
+                return View(kontoAltViewModel); 
+            }
+
+            if (!string.IsNullOrEmpty(kontoAltViewModel.Losenord))
+            {
+                var passwordChangeResult = await userManager.ChangePasswordAsync(user, kontoAltViewModel.CurrentPassword, kontoAltViewModel.Losenord);
+                if (!passwordChangeResult.Succeeded)
+                {
+                    foreach (var error in passwordChangeResult.Errors)
+                    {
+                        Console.WriteLine(error);
+                    }
+
+                    return View(kontoAltViewModel);
+                }
+            }
+
+            user.FirstName = kontoAltViewModel.FirstName;
+            user.LastName = kontoAltViewModel.LastName;
+            user.Address = kontoAltViewModel.Address;
+            user.IsPrivateProfile = kontoAltViewModel.IsPrivateProfile;
+            user.Email = kontoAltViewModel.Email;
+            user.Phone = kontoAltViewModel.Phone;
+
+            var updateResult = await userManager.UpdateAsync(user);
+
+            if (updateResult.Succeeded)
+            {
+                return RedirectToAction("Index", "Home"); 
+            }
+
+            foreach (var error in updateResult.Errors)
+            {
+                Console.WriteLine($"Error: {error}");
+            }
+
+            return View(kontoAltViewModel); 
+        }
+
     }
 }

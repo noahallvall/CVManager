@@ -14,7 +14,7 @@ namespace CVManager.DAL.Entities
 
         public CV? CV { get; set; }
 
-        public bool IsPrivateProfile {  get; set; }
+        public bool? IsPrivateProfile {  get; set; }
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

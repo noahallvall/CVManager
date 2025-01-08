@@ -53,5 +53,7 @@ namespace CVManager.WebApplication.Controllers
             }
             return View(projektViewModel);
         }
+
+        
     }
 }

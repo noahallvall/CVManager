@@ -188,7 +188,7 @@ namespace CVManager.WebApplication.Controllers
         {
 
             var user = await userManager.GetUserAsync(User);
-            Console.WriteLine($"Inloggad användare: {user.UserName}");
+            Console.WriteLine(user.Id);
 
             if (ModelState.IsValid)
             {
@@ -201,7 +201,7 @@ namespace CVManager.WebApplication.Controllers
 
                     Summary = cVViewModel.Summary,
                     ProfilePicturePath = cVViewModel.ProfilePicturePath,
-                    User = user
+                    UserId = user.Id
                 };
 
                 cVContext.CVs.Add(cv);

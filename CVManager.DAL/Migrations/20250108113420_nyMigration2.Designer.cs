@@ -4,6 +4,7 @@ using CVManager.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVManager.DAL.Migrations
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20250108113420_nyMigration2")]
+    partial class nyMigration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,7 +186,8 @@ namespace CVManager.DAL.Migrations
                         {
                             ProjectId = 1,
                             ProjectDescription = "En databas för Aliens",
-                            ProjectName = "MIB"
+                            ProjectName = "MIB",
+                            UploadDate = new DateTime(2025, 1, 8, 12, 34, 20, 4, DateTimeKind.Local).AddTicks(6048)
                         });
                 });
 

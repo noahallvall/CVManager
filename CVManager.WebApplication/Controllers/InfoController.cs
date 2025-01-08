@@ -33,7 +33,8 @@ namespace CVManager.WebApplication.Controllers
                 var projekt = new Project
                 {
                     ProjectName = projektViewModel.ProjectName,
-                    ProjectDescription = projektViewModel.ProjectDescription
+                    ProjectDescription = projektViewModel.ProjectDescription,
+                    UploadDate = DateTime.Now
                 };
 
                 cVContext.Projects.Add(projekt);
@@ -41,7 +42,7 @@ namespace CVManager.WebApplication.Controllers
 
                 var cvProject = new CVProject
                 {
-                    CVId = 1, // Glöm inte att ändra till ett cv id som är kopplat till användaren!
+                    CVId = 1, // Glöm inte att ändra till ett cv id som är kopplat till användarens cvq!
                     ProjectId = projekt.ProjectId
                 };
 

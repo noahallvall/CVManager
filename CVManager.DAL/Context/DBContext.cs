@@ -11,6 +11,8 @@ namespace CVManager.DAL.Context
     {
         public DbSet<CV> CVs { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<CVProject> CVProjects { get; set; }
+        public DbSet<Project> Projects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -399,3 +399,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 CVManager.WebApplication/appsettings.json
+CVManager.WebApplication/appsettings.json

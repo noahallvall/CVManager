@@ -47,6 +47,13 @@ namespace CVManager.DAL.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("CV");
+
+                    b.HasData(
+                        new
+                        {
+                            CVId = 1,
+                            Summary = "Clark är en rolig grabb"
+                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.CVProject", b =>
@@ -192,7 +199,6 @@ namespace CVManager.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SkillName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SkillId");

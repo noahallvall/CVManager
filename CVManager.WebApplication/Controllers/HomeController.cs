@@ -25,25 +25,28 @@ namespace CVManager.WebApplication.Controllers
         public IActionResult Index()
         {
 
-            //Här ska startsidans lista med CVs och projekt returneras.
-            //Hämta data från cvcontext --> bind till HomeViewModel --> returnera 
+            //Hï¿½r ska startsidans lista med CVs och projekt returneras.
+            //Hï¿½mta data frï¿½n cvcontext --> bind till HomeViewModel --> returnera 
             //HomeViewModel till startvyn index. 
 
 
-            // Hämta data från databasen
-            var PublicCVinfo = CVContext.CVs
-                .Include(cv => cv.User) // Ladda användarinformation
+            // Hï¿½mta data frï¿½n databasen
+            var cvList = CVContext.CVs
+             
+                .Include(cv => cv.User) // Ladda anvï¿½ndarinformation
                 .Include(cv => cv.CVProjects) // Ladda sambandstabellen
                 .ThenInclude(cp => cp.Project) // Ladda kopplade projekt
-                //Hämtar alla info där en profil angetts vara offentlig
-                .Where(cv => cv.User.IsPrivateProfile == false)
+                .Include(cv => cv.Skills)
+                .Include(cv => cv.Experiences)
+                .Include(cv => cv.Educations)
                 .ToList();
 
             // Skapa och fyll HomeViewModel
             var homeViewModel = new HomeViewModel
             {
-                CVs = PublicCVinfo,
-                Projects = PublicCVinfo.SelectMany(cv => cv.CVProjects.Select(cp => cp.Project)).ToList()
+                CVs = cvList,
+                Projects = cvList.SelectMany(cv => cv.CVProjects.Select(cp => cp.Project)).ToList()
+               
             };
         
 

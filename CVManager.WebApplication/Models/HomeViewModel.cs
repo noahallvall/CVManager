@@ -9,7 +9,7 @@ namespace CVManager.WebApplication.Models
         public List<CV> CVs { get; set; }
         public List<Project> Projects { get; set; }
 
-
+        
 
     }
 }

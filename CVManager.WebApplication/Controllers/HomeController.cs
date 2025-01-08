@@ -32,9 +32,13 @@ namespace CVManager.WebApplication.Controllers
 
             // Hämta data från databasen
             var cvList = CVContext.CVs
+             
                 .Include(cv => cv.User) // Ladda användarinformation
                 .Include(cv => cv.CVProjects) // Ladda sambandstabellen
                 .ThenInclude(cp => cp.Project) // Ladda kopplade projekt
+                .Include(cv => cv.Skills)
+                .Include(cv => cv.Experiences)
+                .Include(cv => cv.Educations)
                 .ToList();
 
             // Skapa och fyll HomeViewModel
@@ -42,6 +46,7 @@ namespace CVManager.WebApplication.Controllers
             {
                 CVs = cvList,
                 Projects = cvList.SelectMany(cv => cv.CVProjects.Select(cp => cp.Project)).ToList()
+               
             };
         
 

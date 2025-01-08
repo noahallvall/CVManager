@@ -3,36 +3,70 @@
 
 <h1>CVs och Projekt</h1>
 
-@foreach (var cv in Model.CVs)
+@foreach (var cv in Model.CVs.Take(4))
 {
     <div>
         <h2> CVs </h2>
-        <p><strong>First name:</strong> @cv.User.FirstName</p>
-        <p><strong>Last name:</strong> @cv.User.LastName</p>
-        <p><strong>Phone:</strong> @cv.User.PhoneNumber</p>
-        <p><strong>Mail:</strong> @cv.User.Email</p>
+        @if (cv.User != null)
+        {
+            <p><strong>First name:</strong> @cv.User.FirstName</p>
+            <p><strong>Last name:</strong> @cv.User.LastName</p>
+            <p><strong>Phone:</strong> @cv.User.PhoneNumber</p>
+            <p><strong>Mail:</strong> @cv.User.Email</p>
+        }
+        else
+        {
+            <p><strong>User information is missing.</strong></p>
+        }
 
         <p><strong>About me:</strong> @cv.Summary</p>
 
-
-        <p><strong>Educations</strong> @cv.Skills</p>
-        <p><strong>Experiences</strong> @cv.Experiences</p>
-        <p><strong>Skills</strong> @cv.Educations</p>
-      
-        <h3>Projekt:</h3>
+        <p>Skills </p>
+               
         <ul>
-            @foreach (var cvProject in cv.CVProjects)
+            @foreach (var skill in cv.Skills)
             {
-                <li>
-                    <strong>@cvProject.Project.ProjectName:</strong>
-                    <strong>@cvProject.Project.ProjectDescription </strong>
-                    <strong>@cvProject.Project.UploadDate </strong>
+                <li>@skill.SkillName</li>
+            }
+        </ul>
+        <p>Experiences </p>
+        <ul>
+            @foreach (var Experiences in cv.Experiences)
+            {
+                <li>@Experiences.CompanyName</li>
+                <li>@Experiences.Role</li>
+            }
+        </ul>
+        <p>Education </p>
+        <ul>
+            @foreach (var Educations in cv.Educations)
+            {
+                <li>@Educations.Institution</li>
+                <li>@Educations.EducationName</li>
+            }
+        </ul>
 
-                </li>
+        <h3>Projects:</h3>
+        <ul>
+            @if (cv.CVProjects != null)
+            {
+                @foreach (var cvProject in cv.CVProjects)
+                {
+                    <li>
+                        <strong>@cvProject.Project.ProjectName:</strong>
+                        <strong>@cvProject.Project.ProjectDescription </strong>
+                        <strong>@cvProject.Project.UploadDate </strong>
+                    </li>
+                }
+            }
+            else
+            {
+                <li>No projects available.</li>
             }
         </ul>
     </div>
 }
+
 
 
 

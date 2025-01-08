@@ -1,4 +1,42 @@
-﻿@{
+﻿@model HomeViewModel
+
+
+<h1>CVs och Projekt</h1>
+
+@foreach (var cv in Model.CVs)
+{
+    <div>
+        <h2> CVs </h2>
+        <p><strong>First name:</strong> @cv.User.FirstName</p>
+        <p><strong>Last name:</strong> @cv.User.LastName</p>
+        <p><strong>Phone:</strong> @cv.User.PhoneNumber</p>
+        <p><strong>Mail:</strong> @cv.User.Email</p>
+
+        <p><strong>About me:</strong> @cv.Summary</p>
+
+
+        <p><strong>Educations</strong> @cv.Skills</p>
+        <p><strong>Experiences</strong> @cv.Experiences</p>
+        <p><strong>Skills</strong> @cv.Educations</p>
+      
+        <h3>Projekt:</h3>
+        <ul>
+            @foreach (var cvProject in cv.CVProjects)
+            {
+                <li>
+                    <strong>@cvProject.Project.ProjectName:</strong>
+                    <strong>@cvProject.Project.ProjectDescription </strong>
+                    <strong>@cvProject.Project.UploadDate </strong>
+
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+
+
+@{
     ViewData["Title"] = "Home Page";
 }
 

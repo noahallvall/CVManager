@@ -5,6 +5,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using CVManager.DAL.Context;
+using CVManager.DAL.Entities;
 
 namespace CVManager.WebApplication.Controllers
 {
@@ -12,16 +14,38 @@ namespace CVManager.WebApplication.Controllers
     {
         
         private readonly ILogger<HomeController> _logger;
+        private readonly CVContext CVContext;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,CVContext context)
         {
             _logger = logger;
+            CVContext = context;
         }
 
         public IActionResult Index()
         {
 
-            return View();
+            //Här ska startsidans lista med CVs och projekt returneras.
+            //Hämta data från cvcontext --> bind till HomeViewModel --> returnera 
+            //HomeViewModel till startvyn index. 
+
+
+            // Hämta data från databasen
+            var cvList = CVContext.CVs
+                .Include(cv => cv.User) // Ladda användarinformation
+                .Include(cv => cv.CVProjects) // Ladda sambandstabellen
+                .ThenInclude(cp => cp.Project) // Ladda kopplade projekt
+                .ToList();
+
+            // Skapa och fyll HomeViewModel
+            var homeViewModel = new HomeViewModel
+            {
+                CVs = cvList,
+                Projects = cvList.SelectMany(cv => cv.CVProjects.Select(cp => cp.Project)).ToList()
+            };
+        
+
+            return View(homeViewModel);
         }
 
         public IActionResult Privacy()

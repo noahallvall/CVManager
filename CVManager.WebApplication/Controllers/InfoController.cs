@@ -53,5 +53,21 @@ namespace CVManager.WebApplication.Controllers
             }
             return View(projektViewModel);
         }
+
+        [HttpGet]
+        public IActionResult VisaProjekt()
+        {
+            var allaProjekt = cVContext.Projects
+                .Select(p => new VisaProjektViewModel
+                {
+                    ProjectID = p.ProjectId,
+                    ProjectName = p.ProjectName,
+                    ProjectDescription = p.ProjectDescription,
+                    UploadDate = p.UploadDate
+                })
+                .ToList();
+
+            return View(allaProjekt);
+        }
     }
 }

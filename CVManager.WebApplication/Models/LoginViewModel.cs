@@ -7,7 +7,7 @@ namespace CVManager.WebApplication.Models
         [Required(ErrorMessage = "Vänligen skriv ett användarnamn.")]
         [StringLength(255)]
 
-        public string AnvandarNamn {  get; set; }
+        public string AnvandarNamn { get; set; }
 
         [Required(ErrorMessage = "Vänligen skriv ett lösenord.")]
         [DataType(DataType.Password)]

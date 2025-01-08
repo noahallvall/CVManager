@@ -1,0 +1,33 @@
+﻿@model IEnumerable<CVManager.WebApplication.Models.VisaProjektViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Projekt ID</th>
+            <th>Projekt Namn</th>
+            <th>Beskrivning</th>
+            <th>Uppladdningsdatum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var projekt in Model)
+        {
+            <tr>
+                <td>@projekt.ProjectID</td>
+                <td>@projekt.ProjectName</td>
+                <td>@projekt.ProjectDescription</td>
+                <td>
+                    @if (projekt.UploadDate.HasValue)
+                    {
+                        @projekt.UploadDate.Value.ToString("yyyy-MM-dd")
+                    }
+                    else
+                    {
+                        @("1970-01-01")
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

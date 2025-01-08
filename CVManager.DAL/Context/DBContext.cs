@@ -48,14 +48,6 @@ namespace CVManager.DAL.Context
                     ProjectDescription = "En databas för Aliens"
                 }
                 );
-            modelBuilder.Entity<CV>().HasData(
-                new CV
-                {
-                    CVId = 1,
-                    Summary = "Clark är en rolig grabb",
-                    UserId = "ebca9091-87b4-440f-ae6f-7cc292271074"
-                }
-                );
 
             modelBuilder.Entity<Skill>().HasData(
                 new Skill

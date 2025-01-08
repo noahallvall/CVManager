@@ -16,5 +16,7 @@ namespace CVManager.WebApplication.Models
         [Compare("Losenord", ErrorMessage = "Lösenorden matchar inte.")]
         [Display(Name = "Bekräfta lösenordet")]
         public string BekraftaLosenord { get; set; }
+
+        public bool IsPrivateProfile { get; set; }
     }
 }

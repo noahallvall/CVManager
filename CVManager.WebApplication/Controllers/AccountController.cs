@@ -54,22 +54,24 @@ namespace CVManager.WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Registrera(UserRegisterViewModel userRegisterViewModel)
         {
-
             if (ModelState.IsValid)
             {
-                User user = new User();
-                user.UserName = userRegisterViewModel.AnvandarNamn;
+                User user = new User
+                {
+                    UserName = userRegisterViewModel.AnvandarNamn,
+                    IsPrivateProfile = userRegisterViewModel.IsPrivateProfile // Tilldela här
+                };
 
                 var result = await userManager.CreateAsync(user, userRegisterViewModel.Losenord);
 
                 if (result.Succeeded)
                 {
-                    Console.WriteLine("Det gick");
                     await signInManager.SignInAsync(user, isPersistent: true);
                     return RedirectToAction("Index", "Home");
-                } else
+                }
+                else
                 {
-                    foreach(var error in result.Errors)
+                    foreach (var error in result.Errors)
                     {
                         Console.WriteLine($"Error: {error.Code} - {error.Description}");
                     }

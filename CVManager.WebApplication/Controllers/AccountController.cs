@@ -4,7 +4,6 @@ using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -35,9 +34,9 @@ namespace CVManager.WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> LogIn(LoginViewModel loginViewModel)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(loginViewModel.AnvandarNamn, loginViewModel.Losenord,
+                var result = await signInManager.PasswordSignInAsync(loginViewModel.AnvandarNamn, loginViewModel.Losenord, 
                     isPersistent: loginViewModel.RememberMe, lockoutOnFailure: false);
 
 
@@ -79,7 +78,7 @@ namespace CVManager.WebApplication.Controllers
 
                         var cv = new CV
                         {
-                            ProfilePicturePath = null,
+                            ProfilePicturePath = null, 
                             Summary = "",
                             UserId = user.Id
                         };
@@ -128,7 +127,7 @@ namespace CVManager.WebApplication.Controllers
                 Address = user?.Address,
                 Email = user?.Email,
                 Phone = user?.Phone
-
+                
             };
 
             return View(kontoAltViewModel);
@@ -154,7 +153,7 @@ namespace CVManager.WebApplication.Controllers
             if (!passwordCheck)
             {
                 ModelState.AddModelError("CurrentPassword", "Nuvarande lösenord är felinmatat.");
-                return View(kontoAltViewModel);
+                return View(kontoAltViewModel); 
             }
 
             if (!string.IsNullOrEmpty(kontoAltViewModel.Losenord))
@@ -182,7 +181,7 @@ namespace CVManager.WebApplication.Controllers
 
             if (updateResult.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home"); 
             }
 
             foreach (var error in updateResult.Errors)
@@ -190,7 +189,7 @@ namespace CVManager.WebApplication.Controllers
                 Console.WriteLine($"Error: {error}");
             }
 
-            return View(kontoAltViewModel);
+            return View(kontoAltViewModel); 
         }
 
         [HttpGet]

@@ -17,5 +17,7 @@ namespace CVManager.WebApplication.Models
         [Display(Name = "Bekräfta lösenordet")]
         public string BekraftaLosenord { get; set; }
         public bool IsPrivateProfile { get; set; }
+
+
     }
 }

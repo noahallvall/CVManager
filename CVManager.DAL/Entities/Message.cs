@@ -13,7 +13,8 @@ namespace CVManager.DAL.Entities
         public string MessageContent { get; set; }
 
         // Foreign Key to CV
-        public int CVId { get; set; }
+        public int CVSentId { get; set; }
+        public int CVRecievedId { get; set; }
 
         public bool IsRead  { get; set; }
 

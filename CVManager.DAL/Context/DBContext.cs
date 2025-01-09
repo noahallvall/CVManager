@@ -64,7 +64,8 @@ namespace CVManager.DAL.Context
             modelBuilder.Entity<Message>()
            .HasOne(m => m.CV)             
            .WithMany(cv => cv.Messages)   
-           .HasForeignKey(m => m.CVId);
+           .HasForeignKey(m => m.CVSentId)
+           .HasForeignKey(m => m.CVRecievedId);
 
             modelBuilder.Entity<Project>().HasData(
                 new Project

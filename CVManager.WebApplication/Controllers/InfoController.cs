@@ -25,6 +25,34 @@ namespace CVManager.WebApplication.Controllers
             return View(projektViewModel);
         }
 
+
+        public IActionResult CV(int userId)
+        {
+            // Hämta användaren och deras enda CV
+            var user = cVContext.Users
+                .Include(u => u.CV)
+                .ThenInclude(cv => cv.CVProjects)
+                .ThenInclude(cp => cp.Project)
+                .FirstOrDefault(u => u.Id == userId);
+
+            if (user == null || user.CV == null)
+            {
+                return NotFound("Användaren eller deras CV kunde inte hittas.");
+            }
+
+
+            var cvViewModel = new CvViewModel
+            {
+                User = user,
+                CV = user.CV
+            };
+
+            // Skicka användardata och det kopplade cv:t till vyn 
+
+            return View(cvViewModel);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Projekt(ProjektViewModel projektViewModel)
         {

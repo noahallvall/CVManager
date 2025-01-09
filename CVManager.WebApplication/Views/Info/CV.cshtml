@@ -1,0 +1,93 @@
+﻿@model CvViewModel
+
+
+<h1>CV for user: @Model.User.FirstName @Model.User.LastName</h1>
+
+<div>
+    <h2>CV Information</h2>
+
+    @if (Model.User != null)
+    {
+        <p><strong>First name:</strong> @Model.User.FirstName</p>
+        <p><strong>Last name:</strong> @Model.User.LastName</p>
+        <p><strong>Phone:</strong> @Model.User.Phone</p>
+        <p><strong>Email:</strong> @Model.User.Email</p>
+    }
+    else
+    {
+        <p><strong>User information is missing.</strong></p>
+    }
+
+    <p><strong>About me:</strong> @Model.CV.Summary</p>
+
+    <h3>Skills</h3>
+    <ul>
+        @if (Model.CV.Skills != null && Model.CV.Skills.Any())
+        {
+            @foreach (var skill in Model.CV.Skills)
+            {
+                <li>@skill.SkillName</li>
+            }
+        }
+        else
+        {
+            <li>No skills available.</li>
+        }
+    </ul>
+
+    <h3>Experiences</h3>
+    <ul>
+        @if (Model.CV.Experiences != null && Model.CV.Experiences.Any())
+        {
+            @foreach (var experience in Model.CV.Experiences)
+            {
+                <li>
+                    <strong>Company:</strong> @experience.CompanyName <br />
+                    <strong>Role:</strong> @experience.Role
+                </li>
+            }
+        }
+        else
+        {
+            <li>No experiences available.</li>
+        }
+    </ul>
+
+    <h3>Education</h3>
+    <ul>
+        @if (Model.CV.Educations != null && Model.CV.Educations.Any())
+        {
+            @foreach (var education in Model.CV.Educations)
+            {
+                <li>
+                    <strong>Institution:</strong> @education.Institution <br />
+                    <strong>Education:</strong> @education.EducationName
+                </li>
+            }
+        }
+        else
+        {
+            <li>No education records available.</li>
+        }
+    </ul>
+
+    <h3>Projects</h3>
+    <ul>
+        @if (Model.CV.CVProjects != null && Model.CV.CVProjects.Any())
+        {
+            @foreach (var cvProject in Model.CV.CVProjects)
+            {
+                <li>
+                    <strong>Project Name:</strong> @cvProject.Project.ProjectName <br />
+                    <strong>Description:</strong> @cvProject.Project.ProjectDescription <br />
+                    <strong>Upload Date:</strong> @cvProject.Project.UploadDate
+                </li>
+            }
+        }
+        else
+        {
+            <li>No projects available.</li>
+        }
+    </ul>
+</div>
+

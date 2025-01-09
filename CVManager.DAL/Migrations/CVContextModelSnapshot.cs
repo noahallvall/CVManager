@@ -38,15 +38,27 @@ namespace CVManager.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("CVId");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("CV");
+
+                    b.HasData(
+                        new
+                        {
+                            CVId = 1,
+                            Summary = "Clark är en rolig grabb"
+                        },
+                        new
+                        {
+                            CVId = 2,
+                            Summary = "Bert är en tråkig grabb"
+                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.CVProject", b =>
@@ -432,9 +444,7 @@ namespace CVManager.DAL.Migrations
                 {
                     b.HasOne("CVManager.DAL.Entities.User", "User")
                         .WithOne("CV")
-                        .HasForeignKey("CVManager.DAL.Entities.CV", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CVManager.DAL.Entities.CV", "UserId");
 
                     b.Navigation("User");
                 });

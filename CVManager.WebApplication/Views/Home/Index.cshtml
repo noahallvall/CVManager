@@ -17,6 +17,10 @@
         <h2> CVs </h2>
         @if (cv.User != null)
         {
+            <form method="get" asp-controller="Info" asp-action="CV">
+                <input type="hidden" name="id" value="@cv.CVId" />
+                <button type="submit">Visa CV</button>
+            </form>
             <p><strong>First name:</strong> @cv.User.FirstName</p>
             <p><strong>Last name:</strong> @cv.User.LastName</p>
             <p><strong>Phone:</strong> @cv.User.PhoneNumber</p>

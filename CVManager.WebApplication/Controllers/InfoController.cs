@@ -25,15 +25,26 @@ namespace CVManager.WebApplication.Controllers
             return View(projektViewModel);
         }
 
-
-        public IActionResult CV(string userId)
+        [HttpGet]
+        public async Task<IActionResult> CV()
         {
+
+            var uuser = await userManager.GetUserAsync(User);
+
+            if (uuser == null)
+            {
+                Console.WriteLine("Ej inloggad");
+                return NotFound();
+            }
+
+            var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == uuser.Id);
+
             // Hämta användaren och deras enda CV
             var user = cVContext.Users
                 .Include(u => u.CV)
                 .ThenInclude(cv => cv.CVProjects)
                 .ThenInclude(cp => cp.Project)
-                .FirstOrDefault(u => u.Id == userId);
+                .FirstOrDefault(u => u.Id == uuser.Id);
 
             if (user == null || user.CV == null)
             {

@@ -4,6 +4,7 @@ using CVManager.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVManager.DAL.Migrations
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20250108174132_34")]
+    partial class _34
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +50,13 @@ namespace CVManager.DAL.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("CV");
+
+                    b.HasData(
+                        new
+                        {
+                            CVId = 1,
+                            Summary = "Clark är en rolig grabb"
+                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.CVProject", b =>
@@ -192,6 +202,7 @@ namespace CVManager.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SkillName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SkillId");

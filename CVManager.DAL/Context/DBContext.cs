@@ -13,6 +13,7 @@ namespace CVManager.DAL.Context
         public DbSet<User> Users { get; set; }
         public DbSet<CVProject> CVProjects { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<Skill> Skills { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +29,20 @@ namespace CVManager.DAL.Context
                 .HasOne(c => c.User)
                 .WithOne(u => u.CV)
                 .HasForeignKey<CV>(c => c.UserId);
+            modelBuilder.Entity<Skill>()
+                 .HasOne<CV>()
+                 .WithMany(cv => cv.Skills)
+                .HasForeignKey(e => e.CVId);
+
+            modelBuilder.Entity<Education>()
+                 .HasOne<CV>()
+                 .WithMany(cv => cv.Educations)
+                .HasForeignKey(e => e.CVId);
+
+            modelBuilder.Entity<Experience>()
+                 .HasOne<CV>()
+                 .WithMany(cv => cv.Experiences)
+                .HasForeignKey(e => e.CVId);
 
             //Mapping the many to many relationsship between cv --> cvproject <-- project
             modelBuilder.Entity<CVProject>()
@@ -53,6 +68,7 @@ namespace CVManager.DAL.Context
                     ProjectDescription = "En databas för Aliens"
                 }
                 );
+   
 
             modelBuilder.Entity<Skill>().HasData(
                 new Skill

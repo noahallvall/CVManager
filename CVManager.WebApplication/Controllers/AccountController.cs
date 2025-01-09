@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Security.Claims;
-using CVManager.DAL.Context;
 using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Identity;
@@ -13,17 +11,15 @@ namespace CVManager.WebApplication.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly CVContext cVContext;
         private UserManager<User> userManager;
         private SignInManager<User> signInManager;
         private ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr, ILogger<AccountController> logger, CVContext context)
+        public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr, ILogger<AccountController> logger)
         {
             this.userManager = userMngr;
             this.signInManager = signInMngr;
             this._logger = logger;
-            cVContext = context;
         }
 
         [HttpGet]

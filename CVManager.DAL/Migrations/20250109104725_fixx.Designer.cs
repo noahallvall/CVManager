@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVManager.DAL.Migrations
 {
     [DbContext(typeof(CVContext))]
-    [Migration("20250108184239_NyTestMigration")]
-    partial class NyTestMigration
+    [Migration("20250109104725_fixx")]
+    partial class fixx
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,23 +41,15 @@ namespace CVManager.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("CVId");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("CV");
-
-                    b.HasData(
-                        new
-                        {
-                            CVId = 1,
-                            Summary = "Clark är en rolig grabb",
-                            UserId = "ebca9091-87b4-440f-ae6f-7cc292271074"
-                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.CVProject", b =>
@@ -203,7 +195,6 @@ namespace CVManager.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SkillName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SkillId");
@@ -444,9 +435,7 @@ namespace CVManager.DAL.Migrations
                 {
                     b.HasOne("CVManager.DAL.Entities.User", "User")
                         .WithOne("CV")
-                        .HasForeignKey("CVManager.DAL.Entities.CV", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CVManager.DAL.Entities.CV", "UserId");
 
                     b.Navigation("User");
                 });

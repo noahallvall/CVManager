@@ -24,6 +24,11 @@ namespace CVManager.DAL.Context
                 .WithOne(e => e.User)
                 .HasForeignKey<CV>();
 
+            modelBuilder.Entity<CV>()
+                .HasOne(c => c.User)
+                .WithOne(u => u.CV)
+                .HasForeignKey<CV>(c => c.UserId);
+
             //Mapping the many to many relationsship between cv --> cvproject <-- project
             modelBuilder.Entity<CVProject>()
            .HasKey(cp => new { cp.CVId, cp.ProjectId });

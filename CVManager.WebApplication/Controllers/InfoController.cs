@@ -26,7 +26,7 @@ namespace CVManager.WebApplication.Controllers
         }
 
 
-        public IActionResult CV(int userId)
+        public IActionResult CV(string userId)
         {
             // Hämta användaren och deras enda CV
             var user = cVContext.Users

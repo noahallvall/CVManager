@@ -15,7 +15,7 @@ namespace CVManager.DAL.Entities
         public string? ProfilePicturePath { get; set; }
         public string Summary { get; set; }
 
-
+        public string UserId { get; set; }
 
         public virtual ICollection<Skill> Skills { get; set; }
         public virtual ICollection<Experience> Experiences { get; set; }

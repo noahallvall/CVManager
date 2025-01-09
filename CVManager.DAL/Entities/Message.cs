@@ -8,11 +8,13 @@ namespace CVManager.DAL.Entities
 {
     public class Message
     {
-        public int MessageId { get; set; }
+        public string MessageId { get; set; }
 
-
+        public string MessageContent { get; set; }
 
         // Foreign Key to CV
         public int CVId { get; set; }
+
+        public CV CV { get; set; }
     }
 }

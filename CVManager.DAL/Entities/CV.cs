@@ -26,5 +26,7 @@ namespace CVManager.DAL.Entities
         //För att kunna navigera många till många förhållandet. cv - cvproject - project. 
         public virtual ICollection<CVProject> CVProjects { get; set; }
 
+        public virtual ICollection<Message> Messages { get; set; }
+
     }
 }

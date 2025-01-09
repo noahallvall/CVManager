@@ -79,9 +79,14 @@ namespace CVManager.WebApplication.Controllers
                 cVContext.Projects.Add(projekt);
                 await cVContext.SaveChangesAsync();
 
+                var uuser = await userManager.GetUserAsync(User);
+
+                var cv = await cVContext.CVs.FirstOrDefaultAsync
+                    (c => c.UserId == uuser.Id);
+
                 var cvProject = new CVProject
                 {
-                    CVId = 1, // Glöm inte att ändra till ett cv id som är kopplat till användarens cvq!
+                    CVId = cv.CVId, // Glöm inte att ändra till ett cv id som är kopplat till användarens cvq!
                     ProjectId = projekt.ProjectId
                 };
 

@@ -223,6 +223,7 @@ namespace CVManager.WebApplication.Controllers
             return View(cVAltViewModel);
         }
 
+        [HttpPost]
         public async Task<IActionResult> CVAlt(CVAltViewModel cVAltViewModel)
         {
             if (ModelState.IsValid)

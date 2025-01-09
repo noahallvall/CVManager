@@ -15,6 +15,8 @@ namespace CVManager.DAL.Entities
         // Foreign Key to CV
         public int CVId { get; set; }
 
+        public bool IsRead  { get; set; }
+
         public CV CV { get; set; }
     }
 }

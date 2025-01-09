@@ -223,6 +223,36 @@ namespace CVManager.WebApplication.Controllers
             return View(cVAltViewModel);
         }
 
+        public async Task<IActionResult> CVAlt(CVAltViewModel cVAltViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.GetUserAsync (User);
+
+                if (user == null)
+                {
+                    Console.WriteLine("Ej inloggad");
+                    return NotFound();
+                }
+
+                var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+                if(cv == null)
+                {
+                    Console.WriteLine("CV kan ej hittas"); 
+                    return NotFound();
+                }
+
+                cv.Summary = cVAltViewModel.Summary;
+                cv.ProfilePicturePath=cv.ProfilePicturePath;
+
+                cVContext.CVs.Update(cv);
+                await cVContext.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
+            }
+            return View(cVAltViewModel);
+        }
 
 
     }

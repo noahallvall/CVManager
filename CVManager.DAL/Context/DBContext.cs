@@ -25,6 +25,10 @@ namespace CVManager.DAL.Context
                 .WithOne(e => e.User)
                 .HasForeignKey<CV>();
 
+            modelBuilder.Entity<CV>()
+                .HasOne(c => c.User)
+                .WithOne(u => u.CV)
+                .HasForeignKey<CV>(c => c.UserId);
             modelBuilder.Entity<Skill>()
                  .HasOne<CV>()
                  .WithMany(cv => cv.Skills)
@@ -64,19 +68,7 @@ namespace CVManager.DAL.Context
                     ProjectDescription = "En databas för Aliens"
                 }
                 );
-            modelBuilder.Entity<CV>().HasData(
-                new CV
-                {
-                    CVId = 1,
-                    Summary = "Clark är en rolig grabb"
-                },
-                new CV
-                {
-                    CVId=2,
-                    Summary="Bert är en tråkig grabb"
-
-                }
-                );
+   
 
             modelBuilder.Entity<Skill>().HasData(
                 new Skill

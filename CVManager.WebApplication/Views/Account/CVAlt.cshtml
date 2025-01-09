@@ -1,0 +1,26 @@
+﻿@model CVAltViewModel
+
+
+<form method="post" asp-action="CVAlt">
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label>CV innehåll:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Summary" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label>Profilbild:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="ProfilePicturePath" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="offset-sm-2 col-sm-4">
+            <button type="submit" class="btn btn-primary">Ändra</button>
+        </div>
+    </div>
+</form>

@@ -1,15 +1,18 @@
 ﻿@model HomeViewModel
+<div class="logout">
+    <form method="post" asp-controller="Account" asp-action="LoggaUt">
+        <AuthorizeView>
+            <Authorized>
+                <h2>Inloggad som @User.Identity.Name</h2>
+                <input type="submit" value="Logga ut" />
+            </Authorized>
+        </AuthorizeView>
+    </form>
+</div>
 
-<form method="post" asp-controller="Account" asp-action="LoggaUt">
-    <AuthorizeView>
-        <Authorized>
-            <h2>Inloggad som @User.Identity.Name</h2>
-            <input type="submit" value="Logga ut" />
-        </Authorized>
-    </AuthorizeView>
-</form>
-
-<h1>CVs och Projekt</h1>
+<div class="rubrik">
+    <h1>Resume</h1>
+</div>
 
 @foreach (var cv in Model.CVs.Take(4))
 {
@@ -19,18 +22,38 @@
         {
             <p><strong>First name:</strong> @cv.User.FirstName</p>
             <p><strong>Last name:</strong> @cv.User.LastName</p>
-            <p><strong>Phone:</strong> @cv.User.PhoneNumber</p>
-            <p><strong>Mail:</strong> @cv.User.Email</p>
+            <lb>Institutions</lb>
+                <ul>
+
+                    @foreach (var Educations in cv.Educations)
+                    {
+                       
+                        <li>@Educations.Institution</li>
+                        <lb>Programs</lb>
+                        <li>@Educations.EducationName</li>
+                    }
+                </ul>
+            <lb>Skills</lb>
+                <ul>
+                    @foreach (var skill in cv.Skills)
+                    {
+                        
+                        <li>@skill.SkillName</li>
+                    }
+                </ul>
+            <form method="post" asp-controller="Info" asp-action="CV">
+                 <input type="submit" value="Till CV" />
+            </form>
 
         }
         else
         {
             <p><strong>User information is missing.</strong></p>
         }
-
-        <p><strong>About me:</strong> @cv.Summary</p>
-    
-
+@* 
+       @*  <p><strong>About me:</strong> @cv.Summary</p>
+     *@
+@* 
         <p>Skills </p>
                
         <ul>
@@ -55,8 +78,9 @@
                 <li>@Educations.EducationName</li>
             }
         </ul>
-
-        <h3>Projects:</h3>
+ *@
+      <div class="projekt">
+        <h1>Projects</h1>
         <ul>
             @if (cv.CVProjects != null)
             {
@@ -66,6 +90,13 @@
                         <strong>@cvProject.Project.ProjectName:</strong>
                         <strong>@cvProject.Project.ProjectDescription </strong>
                         <strong>@cvProject.Project.UploadDate </strong>
+                        <form method="post" asp-controller="Account" asp-action="LoggaUt"> 
+                            <AuthorizeView>
+                                <Authorized>
+                                    <input type="submit" value="Anmäl till projekt" />
+                                </Authorized>
+                            </AuthorizeView>
+                        </form>
                     </li>
                 }
             }
@@ -74,6 +105,8 @@
                 <li>No projects available.</li>
             }
         </ul>
+
+      </div>
     </div>
 }
 
@@ -84,148 +117,31 @@
     ViewData["Title"] = "Home Page";
 }
 
-<body>
-    <div class= "grid-container">
 
-        <div class="grid-item1">
         
-                <h1 >Searchbar</h1>
-
-        </div>
-        <div class="grid-item2">
-            <h2> CV</h2>
-
-        </div>
-        <div class="grid-item3">
-            <h3>CVContent1</h3>
-        </div>
-        <div class="grid-item4">
-            <h3>CVContent2</h3>
-        </div>
-        <div class="grid-item5">
-            <h3>CVContent3</h3>
-        </div>
-        <div class="grid-item6">
-            <h3>CVContent4</h3>
-        </div>
-        <div class="grid-item7">
-            <h2>Nya Projekt</h2>
-        </div>
-        <div class="grid-item8">
-            <h3>ProjektContent1</h3>
-        </div>
-        <div class="grid-item9">
-            <h3>ProjektContent2</h3>
-        </div>
-        <div class="grid-item10">
-            <h3>ProjektContent3</h3>
-        </div>
-        <div class="grid-item11">
-            <h3>ProjektContent4</h3>
-        </div>
-    </div>
-</body>
-        
-
-
-
-
-
-
-
-
-
 
 
 
 <style>
+    .logout
+    {
+        margin-top:1rem;
+        margin-left:85em;
+        font-size:1rem;
+        
+    }
 
-    body{
-        margin:0;
-        padding:0;
+    .rubrik{
+        margin-bottom: 5rem;
+        margin-top:-3rem;
         text-align:center;
     }
-    .grid-container{
-        display:grid;
-        grid-template-columns: repeat(4, 1fr); 
-        grid-template-rows: auto; 
-        gap: 10px;
-    }
-    .grid-item1{
-        grid-row: 1;
-        grid-column:1 / span 4 ;
-        border-bottom: solid;
+
+    .projekt{
+        margin-top:10rem;
+        text-align: center;
     }
 
-    .grid-item2{
-        grid-row: 2;
-        grid-column: 1 / span 4;
-        background-color: lightblue;
-        border-bottom: solid;
-    }
-
-
-    .grid-item3{
-        grid-row: 3;
-        grid-column: 1;
-        background-color: green;
-        border-bottom: solid;
-    }
-
-    .grid-item4 {
-        grid-row: 3;
-        grid-column: 2;
-        background-color: blue;
-        border-bottom: solid;
-    }
-
-    .grid-item5 {
-        grid-row: 3;
-        grid-column: 3;
-        background-color: orange;
-        border-bottom: solid;
-    }
-
-    .grid-item6 {
-        grid-row: 3;
-        grid-column: 4;
-        background-color: purple;
-        border-bottom: solid;
-    }
-
-    .grid-item7 {
-        grid-row: 4;
-        grid-column: 1/ span 4;
-        background-color: red;
-        border-bottom: solid;
-    }
-
-    .grid-item8 {
-        grid-row: 5;
-        grid-column: 1;
-        background-color: green;
-        border-bottom: solid;
-    }
-
-    .grid-item9 {
-        grid-row: 5;
-        grid-column: 2;
-        background-color: blue;
-        border-bottom: solid;
-    }
-
-    .grid-item10 {
-        grid-row: 5;
-        grid-column: 3;
-        background-color: orange;
-        border-bottom: solid;
-    }
-
-    .grid-item11 {
-        grid-row: 5;
-        grid-column: 4;
-        background-color: purple;
-        border-bottom: solid;
-    }
 
 </style>
+

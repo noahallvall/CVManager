@@ -25,6 +25,10 @@ namespace CVManager.DAL.Context
                 .WithOne(e => e.User)
                 .HasForeignKey<CV>();
 
+            modelBuilder.Entity<CV>()
+                .HasOne(c => c.User)
+                .WithOne(u => u.CV)
+                .HasForeignKey<CV>(c => c.UserId);
             modelBuilder.Entity<Skill>()
                  .HasOne<CV>()
                  .WithMany(cv => cv.Skills)

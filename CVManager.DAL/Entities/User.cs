@@ -10,7 +10,6 @@ namespace CVManager.DAL.Entities
 {
     public class User : IdentityUser
     {
-        public int Id { get; set; }
 
         public CV? CV { get; set; }
 

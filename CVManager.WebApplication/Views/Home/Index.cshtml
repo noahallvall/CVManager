@@ -1,5 +1,13 @@
 ﻿@model HomeViewModel
 
+<form method="post" asp-controller="Account" asp-action="LoggaUt">
+    <AuthorizeView>
+        <Authorized>
+            <h2>Inloggad som @User.Identity.Name</h2>
+            <input type="submit" value="Logga ut" />
+        </Authorized>
+    </AuthorizeView>
+</form>
 
 <h1>CVs och Projekt</h1>
 
@@ -127,14 +135,7 @@
 
 
 
-<form method="post" asp-controller="Account" asp-action="LoggaUt">
-    <AuthorizeView>
-        <Authorized>
-            <h2>Inloggad som @User.Identity.Name</h2>
-            <input type="submit" value="Logga ut" />
-        </Authorized>
-    </AuthorizeView>
-</form>
+
 
 
 <style>

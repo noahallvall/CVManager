@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CVManager.DAL.Context;
 using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Identity;
@@ -13,12 +14,14 @@ namespace CVManager.WebApplication.Controllers
     {
         private UserManager<User> userManager;
         private SignInManager<User> signInManager;
+        private CVContext cVContext;
         private ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr, ILogger<AccountController> logger)
+        public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr, ILogger<AccountController> logger, CVContext context)
         {
             this.userManager = userMngr;
             this.signInManager = signInMngr;
+            this.cVContext = context;
             this._logger = logger;
         }
 
@@ -67,17 +70,35 @@ namespace CVManager.WebApplication.Controllers
                 if (result.Succeeded)
                 {
                     await signInManager.SignInAsync(user, isPersistent: true);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
+                    Console.WriteLine(user.Id);
+
+                    if (ModelState.IsValid)
                     {
-                        Console.WriteLine($"Error: {error.Code} - {error.Description}");
+                        Console.WriteLine("Funkar");
+
+                        var cv = new CV
+                        {
+                            ProfilePicturePath = null, 
+                            Summary = "",
+                            UserId = user.Id
+                        };
+
+                        cVContext.CVs.Add(cv);
+                        await cVContext.SaveChangesAsync();
+
+
+                        return RedirectToAction("Index", "Home");
                     }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            Console.WriteLine($"Error: {error.Code} - {error.Description}");
+                        }
+                    }
+
                 }
             }
-
             return View(userRegisterViewModel);
         }
 

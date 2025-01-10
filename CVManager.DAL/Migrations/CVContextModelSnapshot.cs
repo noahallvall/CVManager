@@ -192,16 +192,11 @@ namespace CVManager.DAL.Migrations
                     b.Property<DateTime?>("UploadDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ownerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProjectId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Project");
                 });
@@ -511,15 +506,6 @@ namespace CVManager.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("CV");
-                });
-
-            modelBuilder.Entity("CVManager.DAL.Entities.Project", b =>
-                {
-                    b.HasOne("CVManager.DAL.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Skill", b =>

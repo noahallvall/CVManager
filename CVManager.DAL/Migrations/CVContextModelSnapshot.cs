@@ -192,13 +192,17 @@ namespace CVManager.DAL.Migrations
                     b.Property<DateTime?>("UploadDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ownerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("ProjectId");
 
                     b.ToTable("Project");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectId = 1,
+                            ProjectDescription = "En databas för Aliens",
+                            ProjectName = "MIB"
+                        });
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Skill", b =>

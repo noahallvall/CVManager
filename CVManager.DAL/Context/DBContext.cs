@@ -67,7 +67,14 @@ namespace CVManager.DAL.Context
            .HasForeignKey(m => m.CVSentId)
            .HasForeignKey(m => m.CVRecievedId);
 
-            
+            modelBuilder.Entity<Project>().HasData(
+                new Project
+                {
+                    ProjectId = 1,
+                    ProjectName = "MIB",
+                    ProjectDescription = "En databas för Aliens"
+                }
+                );
    
 
             modelBuilder.Entity<Skill>().HasData(

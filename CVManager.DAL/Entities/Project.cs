@@ -16,8 +16,6 @@ namespace CVManager.DAL.Entities
 
         public DateTime? UploadDate { get; set; }
 
-        public User user { get; set; }
-
         //För att kunna navigera många till många förhållandet. cv - cvproject - project. 
         public virtual ICollection<CVProject>? CVProjects { get; set; }
     }

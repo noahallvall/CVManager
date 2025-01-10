@@ -60,20 +60,24 @@
             }
         </ul>
 
-        <h3>Projects:</h3>
-        <ul>
-            @foreach (var project in Model.Projects)
-            {
-                <li>
-                    <strong>Name:</strong> @project.ProjectName <br />
-                    <strong>Description:</strong> @project.ProjectDescription <br />
-                    <strong>Upload Date:</strong> @project.UploadDate?.ToString("yyyy-MM-dd") <br />
-                </li>
-            }
-        
-        </ul>
+    
     </div>
 }
+
+<h3>Projects:</h3>
+<ul>
+    @foreach (var project in Model.Projects.Take(4))
+    {
+       
+            <strong>Name:</strong> @project.ProjectName
+            <strong>Description:</strong> @project.ProjectDescription 
+            <strong>Upload Date:</strong> @project.UploadDate?.ToString("yyyy-MM-dd") 
+
+            <br />
+        
+    }
+
+</ul>
 
 
 

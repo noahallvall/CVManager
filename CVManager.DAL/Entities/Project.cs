@@ -18,6 +18,8 @@ namespace CVManager.DAL.Entities
 
         public string ownerId { get; set; }
 
+        public virtual User User { get; set; }
+
         //För att kunna navigera många till många förhållandet. cv - cvproject - project. 
         public virtual ICollection<CVProject>? CVProjects { get; set; }
     }

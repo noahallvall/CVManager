@@ -41,12 +41,19 @@ namespace CVManager.WebApplication.Controllers
                 .Include(cv => cv.Educations)
                 .ToList();
 
+            var sortedProjects = cvList
+                 .SelectMany(cv => cv.CVProjects)
+                 .Where(cp => cp.Project != null) // Ensure project is not null
+                 .Select(cp => cp.Project) // Select project entity
+                 .OrderByDescending(p => p.UploadDate) // Sort by latest upload date
+                 .ToList();
+
             // Skapa och fyll HomeViewModel
             var homeViewModel = new HomeViewModel
             {
                 CVs = cvList,
-                Projects = cvList.SelectMany(cv => cv.CVProjects.Select(cp => cp.Project)).ToList()
-               
+                Projects = sortedProjects
+
             };
         
 

@@ -62,21 +62,15 @@
 
         <h3>Projects:</h3>
         <ul>
-            @if (cv.CVProjects != null)
+            @foreach (var project in Model.Projects)
             {
-                @foreach (var cvProject in cv.CVProjects)
-                {
-                    <li>
-                        <strong>@cvProject.Project.ProjectName:</strong>
-                        <strong>@cvProject.Project.ProjectDescription </strong>
-                        <strong>@cvProject.Project.UploadDate </strong>
-                    </li>
-                }
+                <li>
+                    <strong>Name:</strong> @project.ProjectName <br />
+                    <strong>Description:</strong> @project.ProjectDescription <br />
+                    <strong>Upload Date:</strong> @project.UploadDate?.ToString("yyyy-MM-dd") <br />
+                </li>
             }
-            else
-            {
-                <li>No projects available.</li>
-            }
+        
         </ul>
     </div>
 }

@@ -102,6 +102,70 @@ namespace CVManager.WebApplication.Controllers
             return View(projektViewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LinkCvToProject(int projectId)
+        {
+            try
+            {
+                // Hämta den inloggade användaren
+                var user = await userManager.GetUserAsync(User);
+
+                // Hämta användarens CV
+                var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+                if (cv == null)
+                {
+                    TempData["ErrorMessage"] = "Du måste ha ett CV för att kunna koppla till ett projekt.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Kontrollera att projektet finns
+                var project = await cVContext.Projects.FindAsync(projectId);
+                if (project == null)
+                {
+                    TempData["ErrorMessage"] = "Projektet finns inte.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Kontrollera om kopplingen redan finns
+                var existingLink = await cVContext.CVProjects
+                    .FirstOrDefaultAsync(cp => cp.CVId == cv.CVId && cp.ProjectId == project.ProjectId);
+
+                if (existingLink != null)
+                {
+                    TempData["ErrorMessage"] = "Du är redan kopplad till detta projekt.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Skapa kopplingen mellan CV och projekt
+                var cvProject = new CVProject
+                {
+                    CVId = cv.CVId,
+                    ProjectId = project.ProjectId
+                };
+
+                // Lägg till användarens UserId till projektet
+                project.ownerId = user.Id;
+
+                cVContext.CVProjects.Add(cvProject);
+                await cVContext.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Ditt CV har kopplats till projektet!";
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Ett fel uppstod: {ex.Message}";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+
+
+
+
+
+
 
         [HttpGet]
         public IActionResult VisaProjekt()

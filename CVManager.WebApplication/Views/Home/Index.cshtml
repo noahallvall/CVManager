@@ -71,10 +71,12 @@
        
             <strong>Name:</strong> @project.ProjectName
             <strong>Description:</strong> @project.ProjectDescription 
-            <strong>Upload Date:</strong> @project.UploadDate?.ToString("yyyy-MM-dd") 
+            <strong>Upload Date:</strong> @project.UploadDate?.ToString("yyyy-MM-dd")
 
-            <br />
-        
+        <form method="post" asp-controller="Info" asp-action="LinkCvToProject">
+            <input type="hidden" name="projectId" value="@project.ProjectId" />
+            <button type="submit">Koppla projekt till CV</button>
+        </form>
     }
 
 </ul>

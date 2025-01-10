@@ -69,20 +69,24 @@ namespace CVManager.WebApplication.Controllers
         {
             if(ModelState.IsValid)
             {
-                var projekt = new Project
-                {
-                    ProjectName = projektViewModel.ProjectName,
-                    ProjectDescription = projektViewModel.ProjectDescription,
-                    UploadDate = DateTime.Now
-                };
-
-                cVContext.Projects.Add(projekt);
-                await cVContext.SaveChangesAsync();
 
                 var uuser = await userManager.GetUserAsync(User);
 
                 var cv = await cVContext.CVs.FirstOrDefaultAsync
                     (c => c.UserId == uuser.Id);
+
+                var projekt = new Project
+                {
+                    ProjectName = projektViewModel.ProjectName,
+                    ProjectDescription = projektViewModel.ProjectDescription,
+                    UploadDate = DateTime.Now,
+                    ownerId = uuser.Id
+                };
+
+                cVContext.Projects.Add(projekt);
+                await cVContext.SaveChangesAsync();
+
+                
 
                 var cvProject = new CVProject
                 {

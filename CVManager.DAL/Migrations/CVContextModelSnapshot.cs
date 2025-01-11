@@ -46,7 +46,7 @@ namespace CVManager.DAL.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("CV");
+                    b.ToTable("CV", (string)null);
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.CVProject", b =>
@@ -61,7 +61,7 @@ namespace CVManager.DAL.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("CVProject");
+                    b.ToTable("CVProject", (string)null);
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Education", b =>
@@ -87,7 +87,7 @@ namespace CVManager.DAL.Migrations
 
                     b.HasIndex("CVId");
 
-                    b.ToTable("Education");
+                    b.ToTable("Education", (string)null);
 
                     b.HasData(
                         new
@@ -129,7 +129,7 @@ namespace CVManager.DAL.Migrations
 
                     b.HasIndex("CVId");
 
-                    b.ToTable("Experience");
+                    b.ToTable("Experience", (string)null);
 
                     b.HasData(
                         new
@@ -170,7 +170,7 @@ namespace CVManager.DAL.Migrations
 
                     b.HasIndex("CVRecievedId");
 
-                    b.ToTable("Message");
+                    b.ToTable("Message", (string)null);
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Project", b =>
@@ -198,7 +198,7 @@ namespace CVManager.DAL.Migrations
 
                     b.HasKey("ProjectId");
 
-                    b.ToTable("Project");
+                    b.ToTable("Project", (string)null);
                 });
 
             modelBuilder.Entity("CVManager.DAL.Entities.Skill", b =>
@@ -219,7 +219,7 @@ namespace CVManager.DAL.Migrations
 
                     b.HasIndex("CVId");
 
-                    b.ToTable("Skill");
+                    b.ToTable("Skill", (string)null);
 
                     b.HasData(
                         new

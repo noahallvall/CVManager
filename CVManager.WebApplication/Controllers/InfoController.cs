@@ -11,6 +11,8 @@ namespace CVManager.WebApplication.Controllers
     {
         private readonly CVContext cVContext;
         private UserManager<User> userManager;
+        private string reciever;
+        private string sender;
 
         public InfoController(UserManager<User> userMngr, CVContext context)
         {
@@ -26,7 +28,7 @@ namespace CVManager.WebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CV()
+        public async Task<IActionResult> CV(int id)
         {
 
             var uuser = await userManager.GetUserAsync(User);
@@ -37,19 +39,14 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound();
             }
 
-            var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == uuser.Id);
-
             // Hämta användaren och deras enda CV
-            var user = cVContext.Users
-                .Include(u => u.CV)
-                .ThenInclude(cv => cv.CVProjects)
-                .ThenInclude(cp => cp.Project)
-                .FirstOrDefault(u => u.Id == uuser.Id);
+            var cv = cVContext.CVs
+                .Include(c => c.User) 
+                .Include(c => c.CVProjects)
+                .ThenInclude(cp => cp.Project) 
+                .FirstOrDefault(c => c.CVId == id);
 
-            if (user == null || user.CV == null)
-            {
-                return NotFound("Användaren eller deras CV kunde inte hittas.");
-            }
+            var user = await cVContext.Users.FindAsync(cv.UserId);
 
 
             var cvViewModel = new CvViewModel
@@ -102,6 +99,70 @@ namespace CVManager.WebApplication.Controllers
             return View(projektViewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LinkCvToProject(int projectId)
+        {
+            try
+            {
+                // Hämta den inloggade användaren
+                var user = await userManager.GetUserAsync(User);
+
+                // Hämta användarens CV
+                var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+                if (cv == null)
+                {
+                    TempData["ErrorMessage"] = "Du måste ha ett CV för att kunna koppla till ett projekt.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Kontrollera att projektet finns
+                var project = await cVContext.Projects.FindAsync(projectId);
+                if (project == null)
+                {
+                    TempData["ErrorMessage"] = "Projektet finns inte.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Kontrollera om kopplingen redan finns
+                var existingLink = await cVContext.CVProjects
+                    .FirstOrDefaultAsync(cp => cp.CVId == cv.CVId && cp.ProjectId == project.ProjectId);
+
+                if (existingLink != null)
+                {
+                    TempData["ErrorMessage"] = "Du är redan kopplad till detta projekt.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Skapa kopplingen mellan CV och projekt
+                var cvProject = new CVProject
+                {
+                    CVId = cv.CVId,
+                    ProjectId = project.ProjectId
+                };
+
+                // Lägg till användarens UserId till projektet
+                project.ownerId = user.Id;
+
+                cVContext.CVProjects.Add(cvProject);
+                await cVContext.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Ditt CV har kopplats till projektet!";
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Ett fel uppstod: {ex.Message}";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+
+
+
+
+
+
 
         [HttpGet]
         public IActionResult VisaProjekt()
@@ -119,5 +180,74 @@ namespace CVManager.WebApplication.Controllers
             return View(allaProjekt);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Message(string id)
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == id);
+
+            string messageId = Guid.NewGuid().ToString();
+            
+            sender = user.Id;
+            reciever = userRecieve.Id;
+
+            MessageViewModel messageViewModel = new MessageViewModel()
+            {
+                MessageId = messageId,
+                Sender = sender,
+                Reciever = reciever
+            };
+
+            
+
+            return View(messageViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Message(MessageViewModel messageViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.GetUserAsync(User);
+
+                var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == messageViewModel.Reciever);
+
+                sender = user.Id;
+                reciever = userRecieve.Id;
+
+
+                
+
+                var senderCVId = cVContext.CVs
+                    .Where(cv => cv.UserId == sender) // Filtrera på UserId
+                    .Select(cv => cv.CVId) // Välj endast CVId
+                    .FirstOrDefault();
+
+                var recieverCVId = cVContext.CVs
+                    .Where(cv => cv.UserId == reciever)
+                    .Select(cv => cv.CVId)
+                    .FirstOrDefault();
+
+                
+
+                Message message = new Message()
+                {
+                    MessageId = messageViewModel.MessageId,
+                    MessageContent = messageViewModel.MessageContent,
+                    CVSentId = senderCVId,
+                    CVRecievedId = recieverCVId,
+                    IsRead = false
+                };
+
+                cVContext.Messages.Add(message);
+                await cVContext.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
+
+            }
+
+            return View(messageViewModel);
+        }
     }
 }

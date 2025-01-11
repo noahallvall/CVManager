@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using CVManager.DAL.Context;
 using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
@@ -17,6 +18,7 @@ namespace CVManager.WebApplication.Controllers
         private SignInManager<User> signInManager;
         private CVContext cVContext;
         private ILogger<AccountController> _logger;
+        private int AktivtProjekt;
 
         public AccountController(UserManager<User> userMngr, SignInManager<User> signInMngr, ILogger<AccountController> logger, CVContext context)
         {
@@ -24,6 +26,7 @@ namespace CVManager.WebApplication.Controllers
             this.signInManager = signInMngr;
             this.cVContext = context;
             this._logger = logger;
+            AktivtProjekt = 0;
         }
 
         [HttpGet]
@@ -88,7 +91,7 @@ namespace CVManager.WebApplication.Controllers
                         await cVContext.SaveChangesAsync();
 
 
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Login", "Account");
                     }
                     else
                     {
@@ -291,6 +294,88 @@ namespace CVManager.WebApplication.Controllers
             return View(cVAltViewModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ProjektAlt()
+        {
+            User user = new User();
 
+            if (ModelState.IsValid)
+            {
+                user = await userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    Console.WriteLine("Ej inloggad");
+                    return NotFound();
+                }  
+            }
+
+
+            var allaProjekt = cVContext.Projects
+                .Where(p => p.ownerId == user.Id)
+                .Select(p => new ProjektAltViewModel
+                {
+                    ProjectName = p.ProjectName,
+                    ProjectId = p.ProjectId,
+                    ProjectDescription = p.ProjectDescription
+                })
+                .ToList();
+
+            return View(allaProjekt);
+        }
+
+        
+        [HttpGet]
+        public IActionResult ChangeProject(int id)
+        {
+            Console.WriteLine($"Project ID: {id}");
+
+            var projekt = cVContext.Projects.FirstOrDefault(p => p.ProjectId == id);
+
+            if (projekt == null)
+            {
+                return NotFound();
+            }
+
+            ChangeProjectViewModel changeProjectViewModel = new ChangeProjectViewModel
+            {
+                ProjectId = projekt.ProjectId,
+                ProjectDescription = projekt.ProjectDescription,
+                ProjectName = projekt.ProjectName
+            };
+
+            return View(changeProjectViewModel); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeProject(ChangeProjectViewModel changeProjectViewModel)
+        {
+
+            Console.WriteLine("Aktivt Projekt =" + changeProjectViewModel.ProjectId.ToString() );
+            if (ModelState.IsValid)
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error);
+                }
+
+                var projekt = await cVContext.Projects.FirstOrDefaultAsync(p => p.ProjectId == changeProjectViewModel.ProjectId);
+
+                if (projekt == null)
+                {
+                    Console.WriteLine("Projektet hittades inte.");
+                }
+
+                projekt.ProjectName =changeProjectViewModel.ProjectName;
+                projekt.ProjectDescription = changeProjectViewModel.ProjectDescription;
+
+                cVContext.Projects.Update(projekt);
+                await cVContext.SaveChangesAsync();
+
+                return RedirectToAction("Home", "Index");
+            }
+
+            return View(changeProjectViewModel);
+        }
     }
 }

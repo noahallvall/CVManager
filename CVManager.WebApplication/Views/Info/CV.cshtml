@@ -12,6 +12,10 @@
         <p><strong>Last name:</strong> @Model.User.LastName</p>
         <p><strong>Phone:</strong> @Model.User.Phone</p>
         <p><strong>Email:</strong> @Model.User.Email</p>
+        <form method="get" asp-controller="Info" asp-action="Message">
+            <input type="hidden" name="id" value="@Model.User.Id" />
+            <button type="submit">Skicka meddelande</button>
+        </form>
     }
     else
     {

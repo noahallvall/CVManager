@@ -1,0 +1,16 @@
+﻿@model MessageViewModel
+
+<form method="post" asp-action="Message">
+    <input type="hidden" asp-for="MessageId" />
+    <input type="hidden" asp-for="Sender" />
+    <input type="hidden" asp-for="Reciever" />
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label>Ange meddelande:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="MessageContent" class="form-control" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Skicka meddelande</button>
+</form>

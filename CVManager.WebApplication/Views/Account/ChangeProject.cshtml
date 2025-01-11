@@ -1,0 +1,17 @@
+﻿@model ChangeProjectViewModel
+
+<div>
+    <h2>Ändra Projekt</h2>
+    <form asp-action="ChangeProject" method="post">
+        <input type="hidden" asp-for="ProjectId" />
+        <div>
+            <label for="ProjectName">Projektnamn:</label>
+            <input asp-for="ProjectName" />
+        </div>
+        <div>
+            <label for="ProjectDescription">Projektbeskrivning:</label>
+            <textarea asp-for="ProjectDescription"></textarea>
+        </div>
+        <button type="submit">Spara</button>
+    </form>
+</div>

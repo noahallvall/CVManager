@@ -1,233 +1,138 @@
 ﻿@model HomeViewModel
 
-<form method="post" asp-controller="Account" asp-action="LoggaUt">
-    <AuthorizeView>
-        <Authorized>
-            <h2>Inloggad som @User.Identity.Name</h2>
-            <input type="submit" value="Logga ut" />
-        </Authorized>
-    </AuthorizeView>
-</form>
-
-<h1>CVs och Projekt</h1>
-
-@foreach (var cv in Model.CVs.Take(4))
-{
-    <div>
-        <h2> CVs </h2>
-        @if (cv.User != null)
-        {
-            <form method="get" asp-controller="Info" asp-action="CV">
-                <input type="hidden" name="id" value="@cv.CVId" />
-                <button type="submit">Visa CV</button>
-            </form>
-            <p><strong>First name:</strong> @cv.User.FirstName</p>
-            <p><strong>Last name:</strong> @cv.User.LastName</p>
-            <p><strong>Phone:</strong> @cv.User.PhoneNumber</p>
-            <p><strong>Mail:</strong> @cv.User.Email</p>
-
-        }
-        else
-        {
-            <p><strong>User information is missing.</strong></p>
-        }
-
-        <p><strong>About me:</strong> @cv.Summary</p>
-    
-
-        <p>Skills </p>
-               
-        <ul>
-            @foreach (var skill in cv.Skills)
-            {
-                <li>@skill.SkillName</li>
-            }
-        </ul>
-        <p>Experiences </p>
-        <ul>
-            @foreach (var Experiences in cv.Experiences)
-            {
-                <li>@Experiences.CompanyName</li>
-                <li>@Experiences.Role</li>
-            }
-        </ul>
-        <p>Education </p>
-        <ul>
-            @foreach (var Educations in cv.Educations)
-            {
-                <li>@Educations.Institution</li>
-                <li>@Educations.EducationName</li>
-            }
-        </ul>
-
-    
-    </div>
-}
-
-<h3>Projects:</h3>
-<ul>
-    @foreach (var project in Model.Projects.Take(4))
-    {
-       
-            <strong>Name:</strong> @project.ProjectName
-            <strong>Description:</strong> @project.ProjectDescription 
-            <strong>Upload Date:</strong> @project.UploadDate?.ToString("yyyy-MM-dd") 
-
-            <br />
-        
-    }
-
-</ul>
-
-
-
-
 @{
     ViewData["Title"] = "Home Page";
 }
+@*
 
-<body>
-    <div class= "grid-container">
+*@
 
-        <div class="grid-item1">
-        
-                <h1 >Searchbar</h1>
+<div class="Inlogg"> 
+    <form method="post" asp-controller="Account" asp-action="LoggaUt">
+        <AuthorizeView>
+            <Authorized>
+                <h2>Inloggad som @User.Identity.Name</h2>
+                <input type="submit" value="Logga ut" />
+            </Authorized>
+        </AuthorizeView>
+    </form>
+</div>
 
+<h1>CVs och senast upplagda projekt</h1>
+
+<div class="cv-container">
+    @foreach (var cv in Model.CVs.Take(4))
+    {
+        <div class="cv-item">
+            <h2>CV</h2>
+            @if (cv.User != null)
+            {
+                <form method="get" asp-controller="Info" asp-action="CV">
+                    <input type="hidden" name="id" value="@cv.CVId" />
+                    <button type="submit">Visa CV</button>
+                </form>
+                <p><strong>First name:</strong> @cv.User.FirstName</p>
+                <p><strong>Last name:</strong> @cv.User.LastName</p>
+                <p><strong>Phone:</strong> @cv.User.PhoneNumber</p>
+                <p><strong>Mail:</strong> @cv.User.Email</p>
+            }
+            else
+            {
+                <p><strong>User information is missing.</strong></p>
+            }
+
+            <p><strong>About me:</strong> @cv.Summary</p>
+
+            <p>Skills</p>
+            <ul>
+                @foreach (var skill in cv.Skills)
+                {
+                    <li>@skill.SkillName</li>
+                }
+            </ul>
+
+            <p>Experiences</p>
+            <ul>
+                @foreach (var experience in cv.Experiences)
+                {
+                    <li>@experience.CompanyName</li>
+                    <li>@experience.Role</li>
+                }
+            </ul>
+
+            <p>Education</p>
+            <ul>
+                @foreach (var education in cv.Educations)
+                {
+                    <li>@education.Institution</li>
+                    <li>@education.EducationName</li>
+                }
+            </ul>
         </div>
-        <div class="grid-item2">
-            <h2> CV</h2>
+    }
+</div>
 
+
+<h3>Projekt</h3>
+
+<div class="project-container">
+    @foreach (var project in Model.Projects.Take(4))
+    {
+        <div class="project-item">
+            <p><strong>Name:</strong> @project.ProjectName</p>
+            <p><strong>Description:</strong> @project.ProjectDescription</p>
+            <p><strong>Upload Date:</strong> @project.UploadDate?.ToString("yyyy-MM-dd")</p>
+
+            <form method="post" asp-controller="Info" asp-action="LinkCvToProject">
+                <input type="hidden" name="projectId" value="@project.ProjectId" />
+                <button type="submit">Koppla projekt till CV</button>
+            </form>
         </div>
-        <div class="grid-item3">
-            <h3>CVContent1</h3>
-        </div>
-        <div class="grid-item4">
-            <h3>CVContent2</h3>
-        </div>
-        <div class="grid-item5">
-            <h3>CVContent3</h3>
-        </div>
-        <div class="grid-item6">
-            <h3>CVContent4</h3>
-        </div>
-        <div class="grid-item7">
-            <h2>Nya Projekt</h2>
-        </div>
-        <div class="grid-item8">
-            <h3>ProjektContent1</h3>
-        </div>
-        <div class="grid-item9">
-            <h3>ProjektContent2</h3>
-        </div>
-        <div class="grid-item10">
-            <h3>ProjektContent3</h3>
-        </div>
-        <div class="grid-item11">
-            <h3>ProjektContent4</h3>
-        </div>
-    </div>
-</body>
-        
-
-
-
-
-
-
-
-
-
-
-
+    }
+</div>
 
 <style>
 
-    body{
-        margin:0;
-        padding:0;
+    .Inlogg{
+        text-align:right;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: antiquewhite;
+    }
+
+    .h1{
+        text-align:center;
+        top:5vh;
+    }
+
+    .h3{
         text-align:center;
     }
-    .grid-container{
-        display:grid;
-        grid-template-columns: repeat(4, 1fr); 
-        grid-template-rows: auto; 
-        gap: 10px;
-    }
-    .grid-item1{
-        grid-row: 1;
-        grid-column:1 / span 4 ;
-        border-bottom: solid;
+
+    .cv-container {
+        display: grid;
+        grid-template-columns: repeat(2, 35vw); /* Each column takes 45% of the viewport width */
+        gap: 1vw; /* Space between the CVs is based on viewport width */
+        width: 100%;
+        justify-content: center; /* Center the grid items */
     }
 
-    .grid-item2{
-        grid-row: 2;
-        grid-column: 1 / span 4;
-        background-color: lightblue;
-        border-bottom: solid;
-    }
-
-
-    .grid-item3{
-        grid-row: 3;
-        grid-column: 1;
-        background-color: green;
-        border-bottom: solid;
-    }
-
-    .grid-item4 {
-        grid-row: 3;
-        grid-column: 2;
-        background-color: blue;
-        border-bottom: solid;
-    }
-
-    .grid-item5 {
-        grid-row: 3;
-        grid-column: 3;
-        background-color: orange;
-        border-bottom: solid;
-    }
-
-    .grid-item6 {
-        grid-row: 3;
-        grid-column: 4;
-        background-color: purple;
-        border-bottom: solid;
-    }
-
-    .grid-item7 {
-        grid-row: 4;
-        grid-column: 1/ span 4;
-        background-color: red;
-        border-bottom: solid;
-    }
-
-    .grid-item8 {
-        grid-row: 5;
-        grid-column: 1;
-        background-color: green;
-        border-bottom: solid;
-    }
-
-    .grid-item9 {
-        grid-row: 5;
-        grid-column: 2;
-        background-color: blue;
-        border-bottom: solid;
-    }
-
-    .grid-item10 {
-        grid-row: 5;
-        grid-column: 3;
-        background-color: orange;
-        border-bottom: solid;
-    }
-
-    .grid-item11 {
-        grid-row: 5;
-        grid-column: 4;
-        background-color: purple;
-        border-bottom: solid;
+    /* Project Container */
+   
+    .project-container {
+        display: grid;
+        grid-template-columns: repeat(2, 25vw); /* Reduced column width to make them closer */
+        gap: 1vw; /* Reduced gap between columns in vw units */
+        width: 100%;
+        margin: 0 auto; /* Center the project section */
+        padding: 3vh; /* Padding for scalability */
+        box-sizing: border-box;
+        margin-top: 5vh; /* Space between CVs and Projects */
     }
 
 </style>
+

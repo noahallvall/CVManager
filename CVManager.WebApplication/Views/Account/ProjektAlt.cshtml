@@ -1,0 +1,16 @@
+﻿@model IEnumerable<CVManager.WebApplication.Models.ProjektAltViewModel>
+
+@if (Model != null)
+{
+    foreach (var projekt in Model)
+    {
+        <div>
+            <h2>@projekt.ProjectName</h2>
+            <h2>@projekt.ProjectId</h2>
+            <form method="get" asp-controller="Account" asp-action="ChangeProject">
+                <input type="hidden" name="id" value="@projekt.ProjectId" />
+                <button type="submit">Gå in på ditt projekt</button>
+            </form>
+        </div>
+    }
+}

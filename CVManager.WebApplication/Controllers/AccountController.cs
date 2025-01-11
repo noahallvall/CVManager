@@ -208,6 +208,11 @@ namespace CVManager.WebApplication.Controllers
             var cv = await cVContext.CVs
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
+            
+
+            var skill = await cVContext.Skills
+                .FirstOrDefaultAsync(c => c.CVId == cv.CVId);
+
             if (cv == null)
             {
                 Console.WriteLine("CV hittades inte för användaren");
@@ -238,7 +243,33 @@ namespace CVManager.WebApplication.Controllers
 
                 var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
-                if(cv == null)
+                Skill skill = new Skill()
+                {
+
+                    SkillName = cVAltViewModel.SkillName,
+                    CVId = cv.CVId
+
+                };
+
+                Education education = new Education()
+                {
+
+                    Institution = cVAltViewModel.Institution,
+                    EducationName= cVAltViewModel.EducationName,
+                    CVId = cv.CVId
+
+                };
+
+                Experience experience = new Experience()
+                {
+
+                    CompanyName = cVAltViewModel.CompanyName,
+                    Role = cVAltViewModel.Role,
+                    CVId = cv.CVId
+
+                };
+
+                if (cv == null)
                 {
                     Console.WriteLine("CV kan ej hittas"); 
                     return NotFound();
@@ -247,6 +278,11 @@ namespace CVManager.WebApplication.Controllers
                 cv.Summary = cVAltViewModel.Summary;
                 cv.ProfilePicturePath=cv.ProfilePicturePath;
 
+                cVContext.Experiences.Update(experience);
+                await cVContext.SaveChangesAsync();
+                cVContext.Educations.Update(education);
+                cVContext.Skills.Update(skill);
+                await cVContext.SaveChangesAsync();
                 cVContext.CVs.Update(cv);
                 await cVContext.SaveChangesAsync();
 

@@ -32,14 +32,10 @@ namespace CVManager.WebApplication.Controllers
         public async Task<IActionResult> CV(int id)
         {
 
-            Console.WriteLine(id.ToString());  
+            Console.WriteLine(id.ToString());
             if (id != 0)
             {
                 Console.WriteLine(id.ToString());
-
-                var uuser = await userManager.GetUserAsync(User);
-
-
 
                 // Hämta användaren och deras enda CV
                 var cv = cVContext.CVs
@@ -63,8 +59,29 @@ namespace CVManager.WebApplication.Controllers
                 // Skicka användardata och det kopplade cv:t till vyn 
 
                 return View(cvViewModel);
+            } else if (id == 0)
+            {
+                
+
+                var user = await userManager.GetUserAsync(User);
+
+                var cv = cVContext.CVs
+                    .Include(c => c.User)
+                    .Include(c => c.CVProjects)
+                    .ThenInclude(cp => cp.Project)
+                    .FirstOrDefault(c => c.UserId == user.Id);
+
+                CvViewModel cvViewModel = new CvViewModel()
+                {
+                    User = user,
+                    CV = user.CV
+                };
+                return View(cvViewModel);
             }
+
+
             return RedirectToAction("Index", "Home");
+            
         }
 
 

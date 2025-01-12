@@ -1,0 +1,16 @@
+﻿@model IEnumerable<CVManager.WebApplication.Models.KonversationerViewModel>
+@if (Model != null)
+{
+    foreach (var konversation in @Model)
+    {
+        <div>
+            
+            <form method="get" asp-controller="Info" asp-action="Meddelande">
+                <input type="hidden" name="id" value="" />
+                <button type="submit">Visa Konversation</button>
+            </form>
+        </div>
+    }
+} else {
+    <h1>Inga aktiva konversationer</h1>
+}

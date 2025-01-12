@@ -1,9 +1,12 @@
 ﻿using CVManager.DAL.Context;
 using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CVManager.WebApplication.Controllers
@@ -61,7 +64,7 @@ namespace CVManager.WebApplication.Controllers
                 return View(cvViewModel);
             } else if (id == 0)
             {
-                
+
 
                 var user = await userManager.GetUserAsync(User);
 
@@ -81,14 +84,14 @@ namespace CVManager.WebApplication.Controllers
 
 
             return RedirectToAction("Index", "Home");
-            
+
         }
 
 
         [HttpPost]
         public async Task<IActionResult> Projekt(ProjektViewModel projektViewModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
 
                 var uuser = await userManager.GetUserAsync(User);
@@ -107,7 +110,7 @@ namespace CVManager.WebApplication.Controllers
                 cVContext.Projects.Add(projekt);
                 await cVContext.SaveChangesAsync();
 
-                
+
 
                 var cvProject = new CVProject
                 {
@@ -212,8 +215,8 @@ namespace CVManager.WebApplication.Controllers
             var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == id);
 
             string messageId = Guid.NewGuid().ToString();
-            
-            
+
+
             reciever = userRecieve.Id;
 
             MessageViewModel messageViewModel = new MessageViewModel()
@@ -222,7 +225,7 @@ namespace CVManager.WebApplication.Controllers
                 Reciever = reciever
             };
 
-            
+
 
             return View(messageViewModel);
         }
@@ -236,7 +239,7 @@ namespace CVManager.WebApplication.Controllers
 
                 var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == messageViewModel.Reciever);
 
-                if(user != null)
+                if (user != null)
                 {
                     sender = user.Id;
                 }
@@ -244,7 +247,7 @@ namespace CVManager.WebApplication.Controllers
                 reciever = userRecieve.Id;
 
 
-                
+
 
                 var senderCVId = cVContext.CVs
                     .Where(cv => cv.UserId == sender) // Filtrera på UserId
@@ -256,13 +259,13 @@ namespace CVManager.WebApplication.Controllers
                     .Select(cv => cv.CVId)
                     .FirstOrDefault();
 
-                
+
 
                 Message message = new Message()
                 {
                     MessageId = messageViewModel.MessageId,
                     MessageContent = messageViewModel.MessageContent,
-                    
+
                     CVRecievedId = recieverCVId,
                     IsRead = false
                 };
@@ -284,6 +287,52 @@ namespace CVManager.WebApplication.Controllers
             }
 
             return View(messageViewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Konversationer()
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            var reciever = cVContext.CVs
+                .Where(cv => cv.UserId == user.Id)
+                .FirstOrDefault();
+
+            var messages = cVContext.Messages
+                .Where(m => m.CVRecievedId == reciever.CVId)
+                .ToList();
+
+            List<CV> CVsAttSkicka = new List<CV>();
+
+            foreach (var message in messages) {
+                var matchandeCVs = cVContext.CVs
+                    .Where(c => c.CVId == message.CVSentId)
+                    .ToList();
+
+                CVsAttSkicka.AddRange(matchandeCVs);
+            }
+
+            List<User> users = new List<User>();
+
+            foreach (var CV in CVsAttSkicka)
+            {
+                var matchandeUser = cVContext.Users
+                    .Where(u => u.Id == CV.UserId)
+                    .ToList();
+
+                users.AddRange(matchandeUser);
+            }
+
+            List<string> AllaNamn = new List<string>(); 
+
+            foreach(var uuser in users)
+            {
+                AllaNamn.Add(uuser.FirstName + " "+ uuser.LastName);
+            }
+
+            
+
+            return View();
         }
     }
 }

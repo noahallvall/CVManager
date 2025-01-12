@@ -31,33 +31,39 @@ namespace CVManager.WebApplication.Controllers
         public async Task<IActionResult> CV(int id)
         {
 
-            var uuser = await userManager.GetUserAsync(User);
-
-            if (uuser == null)
+            Console.WriteLine(id.ToString());  
+            if (id != 0)
             {
-                Console.WriteLine("Ej inloggad");
-                return NotFound();
+                Console.WriteLine(id.ToString());
+
+                var uuser = await userManager.GetUserAsync(User);
+
+
+
+                // Hämta användaren och deras enda CV
+                var cv = cVContext.CVs
+                    .Include(c => c.User)
+                    .Include(c => c.CVProjects)
+                    .ThenInclude(cp => cp.Project)
+                    .FirstOrDefault(c => c.CVId == id);
+
+                User user;
+                CvViewModel cvViewModel = new CvViewModel();
+
+
+                user = await cVContext.Users.FindAsync(cv.UserId);
+
+                cvViewModel = new CvViewModel()
+                {
+                    User = user,
+                    CV = user.CV
+                };
+
+                // Skicka användardata och det kopplade cv:t till vyn 
+
+                return View(cvViewModel);
             }
-
-            // Hämta användaren och deras enda CV
-            var cv = cVContext.CVs
-                .Include(c => c.User) 
-                .Include(c => c.CVProjects)
-                .ThenInclude(cp => cp.Project) 
-                .FirstOrDefault(c => c.UserId == uuser.Id);
-
-            var user = await cVContext.Users.FindAsync(cv.UserId);
-
-
-            var cvViewModel = new CvViewModel
-            {
-                User = user,
-                CV = user.CV
-            };
-
-            // Skicka användardata och det kopplade cv:t till vyn 
-
-            return View(cvViewModel);
+            return RedirectToAction("Index", "Home");
         }
 
 
@@ -235,10 +241,18 @@ namespace CVManager.WebApplication.Controllers
                 {
                     MessageId = messageViewModel.MessageId,
                     MessageContent = messageViewModel.MessageContent,
-                    CVSentId = senderCVId,
+                    
                     CVRecievedId = recieverCVId,
                     IsRead = false
                 };
+
+                if (user != null)
+                {
+                    message.CVSentId = senderCVId;
+                } else
+                {
+                    message.CVSentId = null;
+                }
 
                 cVContext.Messages.Add(message);
                 await cVContext.SaveChangesAsync();

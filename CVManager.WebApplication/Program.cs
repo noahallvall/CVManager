@@ -12,6 +12,8 @@ builder.Services.AddIdentityApiEndpoints<User>()
 var connString = builder.Configuration.GetConnectionString("CVContext");
 builder.Services.AddSqlServer<CVContext>(connString);
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -17,16 +17,19 @@ namespace CVManager.WebApplication.Controllers
         private UserManager<User> userManager;
         private string reciever;
         private string sender;
+        public int Antal;
 
         public InfoController(UserManager<User> userMngr, CVContext context)
         {
             this.cVContext = context;
             this.userManager = userMngr;
+            
         }
 
         [HttpGet]
         public IActionResult Projekt()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             ProjektViewModel projektViewModel = new ProjektViewModel();
             return View(projektViewModel);
         }
@@ -34,7 +37,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> CV(int id)
         {
-
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             Console.WriteLine(id.ToString());
             if (id != 0)
             {
@@ -91,6 +94,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Projekt(ProjektViewModel projektViewModel)
         {
+
             if (ModelState.IsValid)
             {
 
@@ -194,6 +198,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public IActionResult VisaProjekt()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var allaProjekt = cVContext.Projects
                 .Select(p => new VisaProjektViewModel
                 {
@@ -210,6 +215,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Message(string id)
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var user = await userManager.GetUserAsync(User);
 
             var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == id);
@@ -305,6 +311,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Konversationer()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var user = await userManager.GetUserAsync(User);
 
             var reciever = cVContext.CVs
@@ -342,6 +349,8 @@ namespace CVManager.WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Konversationer(string messageId)
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
+            GlobalData.OlastaMeddelandenCount -= 1;
             var message = await cVContext.Messages.FirstOrDefaultAsync(m => m.MessageId == messageId);
 
             message.IsRead = true;
@@ -380,5 +389,7 @@ namespace CVManager.WebApplication.Controllers
 
             return View(konversationerViewModel);
         }
+
+        
     }
 }

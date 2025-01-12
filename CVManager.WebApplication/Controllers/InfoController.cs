@@ -282,11 +282,14 @@ namespace CVManager.WebApplication.Controllers
                 {
                     message.CVSentId = senderCVId;
                     message.SendersName = (senderName.FirstName + " " + senderName.LastName);
+                    message.RecieversName = (userRecieve.FirstName + " " + userRecieve.LastName);
+                    
                     
                 } else
                 {
                     message.SendersName = messageViewModel.SenderName;
                     message.CVSentId = null;
+                    message.RecieversName = (userRecieve.FirstName + " " + userRecieve.LastName);
                 }
 
                 cVContext.Messages.Add(message);
@@ -308,16 +311,72 @@ namespace CVManager.WebApplication.Controllers
                 .Where(cv => cv.UserId == user.Id)
                 .FirstOrDefault();
 
-            var messages = cVContext.Messages
+
+            var recievedMessages = cVContext.Messages
                 .Where(m => m.CVRecievedId == reciever.CVId)
+                .ToList();
+
+            var sentMessages = cVContext.Messages
+                .Where(m => m.CVSentId == reciever.CVId)
+                .ToList();
+
+            var CVs = cVContext.CVs
+                .ToList();
+
+            var users = cVContext.Users
                 .ToList();
 
             KonversationerViewModel konversationerViewModel = new KonversationerViewModel()
             {
-                RecievedMessages = messages
+                RecievedMessages = recievedMessages,
+                SentMessages = sentMessages,
+                Users = users,
+                CVS = CVs
             };
 
             
+
+            return View(konversationerViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Konversationer(string messageId)
+        {
+            var message = await cVContext.Messages.FirstOrDefaultAsync(m => m.MessageId == messageId);
+
+            message.IsRead = true;
+
+            cVContext.Messages.Update(message);
+            await cVContext.SaveChangesAsync();
+
+            var user = await userManager.GetUserAsync(User);
+
+            var reciever = cVContext.CVs
+                .Where(cv => cv.UserId == user.Id)
+                .FirstOrDefault();
+
+
+            var recievedMessages = cVContext.Messages
+                .Where(m => m.CVRecievedId == reciever.CVId)
+                .ToList();
+
+            var sentMessages = cVContext.Messages
+                .Where(m => m.CVSentId == reciever.CVId)
+                .ToList();
+
+            var CVs = cVContext.CVs
+                .ToList();
+
+            var users = cVContext.Users
+                .ToList();
+
+            KonversationerViewModel konversationerViewModel = new KonversationerViewModel()
+            {
+                RecievedMessages = recievedMessages,
+                SentMessages = sentMessages,
+                Users = users,
+                CVS = CVs
+            };
 
             return View(konversationerViewModel);
         }

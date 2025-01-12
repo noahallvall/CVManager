@@ -1,53 +1,76 @@
 ﻿@model KonversationerViewModel
 @if (Model != null)
 {
-    <h1>Mottagna meddelanden:</h1>
-    foreach (var konversation in Model.RecievedMessages)
-    {
-        <div>
-            <h2>Meddelande från: @konversation.SendersName</h2>
-            <p>@konversation.MessageContent</p>
-            @if(konversation.IsRead == true)
-            {
-                <p>Meddelande markerat som läst!</p>
-            } else {
-                <p>Meddelande inte markerat som läst!</p>
-            }
-            <form method="get" asp-controller="Info" asp-action="Message">
-                <input type="hidden" name="id" value="@konversation.CVSentId" />
-                <button type="submit">Svara.</button>
-            </form>
-            <form method="post" asp-controller="Info" asp-action="MessageRead">
-                <input type="hidden" name="isRead" value="True" />
-                <button type="submit">Markera som läst.</button>
-            </form>
-        </div>
+    @if(Model.RecievedMessages.Count != 0){
+        <h1>Mottagna meddelanden:</h1>
+        foreach (var konversation in Model.RecievedMessages)
+        {
+            string skickaId = " ";
+            <div>
+                <h2>Meddelande från: @konversation.SendersName</h2>
+                <p>@konversation.MessageContent</p>
+                @if(konversation.IsRead == true)
+                {
+                    <p>Meddelande markerat som läst!</p>
+                } else {
+                    <p>Meddelande inte markerat som läst!</p>
+                }
+                @foreach (var CV in Model.CVS)
+                {
+                    if (CV.CVId == konversation.CVSentId)
+                    {
+                        skickaId = CV.UserId;
+                    }
+                }
+                <form method="get" asp-controller="Info" asp-action="Message">
+                        
+                    <input type="hidden" name="id" value="@skickaId" />
+                    <button type="submit">Skriv ett meddelande</button>
+                </form>
+                @if(konversation.IsRead != true){
+                    <form method="post" asp-controller="Info" asp-action="Konversationer">
+                        <input type="hidden" name="messageId" value="@konversation.MessageId" />
+                        <button type="submit">Markera som läst.</button>
+                    </form>
+                }
+            </div>
+        }
+    } else {
+        <h1>Inga aktiva konversationer</h1>
     }
 
-    <h1>Skickade Meddelanden: </h1>
-    foreach (var konversation in Model.SentMessages)
-    {
-        <div>
-            <h2>Meddelande till: @konversation.SendersName</h2>
-            <p>@konversation.MessageContent</p>
-            @if (konversation.IsRead == true)
+    @if(Model.SentMessages.Count != 0){
+        <h1>Skickade Meddelanden: </h1>
+        foreach (var konversation in Model.SentMessages)
+        {
+            string skickaId = " ";
+            foreach (var CV in Model.CVS)
             {
-                <p>Meddelande markerat som läst!</p>
+                if (CV.CVId == konversation.CVRecievedId)
+                {
+                    skickaId = CV.UserId;
+                }
             }
-            else
-            {
-                <p>Meddelande inte markerat som läst!</p>
-            }
-            <form method="get" asp-controller="Info" asp-action="Message">
-                <input type="hidden" name="id" value="@konversation.CVSentId" />
-                <button type="submit">Svara.</button>
-            </form>
-            <form method="post" asp-controller="Info" asp-action="MessageRead">
-                <input type="hidden" name="isRead" value="True" />
-                <button type="submit">Markera som läst.</button>
-            </form>
+            <div>
+                <h2>Meddelande till: @konversation.RecieversName</h2>
+                <p>@konversation.MessageContent</p>
+                @if (konversation.IsRead == true)
+                {
+                    <p>Meddelande markerat som läst!</p>
+                }
+                else
+                {
+                    <p>Meddelande inte markerat som läst!</p>
+                }
+                
+                    <form method="get" asp-controller="Info" asp-action="Message">
+                    <input type="hidden" name="id" value="@skickaId" />
+                    <button type="submit">Skriv ett till meddelande</button>
+                    </form>
+                
+                
+
         </div>
     }
-} else {
-    <h1>Inga aktiva konversationer</h1>
+    }
 }

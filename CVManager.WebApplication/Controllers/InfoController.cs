@@ -44,7 +44,7 @@ namespace CVManager.WebApplication.Controllers
                 .Include(c => c.User) 
                 .Include(c => c.CVProjects)
                 .ThenInclude(cp => cp.Project) 
-                .FirstOrDefault(c => c.CVId == id);
+                .FirstOrDefault(c => c.UserId == uuser.Id);
 
             var user = await cVContext.Users.FindAsync(cv.UserId);
 

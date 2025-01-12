@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+        
+    
     <title>@ViewData["Title"] - CVManager.WebApplication</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -54,13 +57,17 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Info" asp-action="Konversationer">Konversationer</a>
+                                <p>Olästa meddelanden: @ViewBag.Antal</p>
                             </li>
+                            
+
                         }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -77,7 +84,6 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     
-
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.6.0.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate.unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>

@@ -32,13 +32,15 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public IActionResult LogIn()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             LoginViewModel loginViewModel = new LoginViewModel();
             return View(loginViewModel);
         }
         [HttpPost]
         public async Task<IActionResult> LogIn(LoginViewModel loginViewModel)
         {
-            if(ModelState.IsValid)
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
+            if (ModelState.IsValid)
             {
                 var result = await signInManager.PasswordSignInAsync(loginViewModel.AnvandarNamn, loginViewModel.Losenord, 
                     isPersistent: loginViewModel.RememberMe, lockoutOnFailure: false);
@@ -61,6 +63,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Registrera(UserRegisterViewModel userRegisterViewModel)
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             if (ModelState.IsValid)
             {
                 User user = new User
@@ -117,6 +120,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> KontoAlt()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var user = await userManager.GetUserAsync(User);
 
             if (user == null)
@@ -199,6 +203,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> CVAlt()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var user = await userManager.GetUserAsync(User);
 
             if (user == null)
@@ -428,6 +433,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> ProjektAlt()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             User user = new User();
 
             if (ModelState.IsValid)
@@ -459,6 +465,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public IActionResult ChangeProject(int id)
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             Console.WriteLine($"Project ID: {id}");
 
             var projekt = cVContext.Projects.FirstOrDefault(p => p.ProjectId == id);

@@ -4,6 +4,7 @@ using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CVManager.WebApplication.Controllers
 {
@@ -31,33 +32,39 @@ namespace CVManager.WebApplication.Controllers
         public async Task<IActionResult> CV(int id)
         {
 
-            var uuser = await userManager.GetUserAsync(User);
-
-            if (uuser == null)
+            Console.WriteLine(id.ToString());  
+            if (id != 0)
             {
-                Console.WriteLine("Ej inloggad");
-                return NotFound();
+                Console.WriteLine(id.ToString());
+
+                var uuser = await userManager.GetUserAsync(User);
+
+
+
+                // Hämta användaren och deras enda CV
+                var cv = cVContext.CVs
+                    .Include(c => c.User)
+                    .Include(c => c.CVProjects)
+                    .ThenInclude(cp => cp.Project)
+                    .FirstOrDefault(c => c.CVId == id);
+
+                User user;
+                CvViewModel cvViewModel = new CvViewModel();
+
+
+                user = await cVContext.Users.FindAsync(cv.UserId);
+
+                cvViewModel = new CvViewModel()
+                {
+                    User = user,
+                    CV = user.CV
+                };
+
+                // Skicka användardata och det kopplade cv:t till vyn 
+
+                return View(cvViewModel);
             }
-
-            // Hämta användaren och deras enda CV
-            var cv = cVContext.CVs
-                .Include(c => c.User) 
-                .Include(c => c.CVProjects)
-                .ThenInclude(cp => cp.Project) 
-                .FirstOrDefault(c => c.UserId == uuser.Id);
-
-            var user = await cVContext.Users.FindAsync(cv.UserId);
-
-
-            var cvViewModel = new CvViewModel
-            {
-                User = user,
-                CV = user.CV
-            };
-
-            // Skicka användardata och det kopplade cv:t till vyn 
-
-            return View(cvViewModel);
+            return RedirectToAction("Index", "Home");
         }
 
 
@@ -189,13 +196,12 @@ namespace CVManager.WebApplication.Controllers
 
             string messageId = Guid.NewGuid().ToString();
             
-            sender = user.Id;
+            
             reciever = userRecieve.Id;
 
             MessageViewModel messageViewModel = new MessageViewModel()
             {
                 MessageId = messageId,
-                Sender = sender,
                 Reciever = reciever
             };
 
@@ -213,7 +219,11 @@ namespace CVManager.WebApplication.Controllers
 
                 var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == messageViewModel.Reciever);
 
-                sender = user.Id;
+                if(user != null)
+                {
+                    sender = user.Id;
+                }
+
                 reciever = userRecieve.Id;
 
 
@@ -235,10 +245,19 @@ namespace CVManager.WebApplication.Controllers
                 {
                     MessageId = messageViewModel.MessageId,
                     MessageContent = messageViewModel.MessageContent,
-                    CVSentId = senderCVId,
+                    
                     CVRecievedId = recieverCVId,
                     IsRead = false
                 };
+
+                if (user != null)
+                {
+                    message.CVSentId = senderCVId;
+                } else
+                {
+                    message.SendersName = messageViewModel.SenderName;
+                    message.CVSentId = null;
+                }
 
                 cVContext.Messages.Add(message);
                 await cVContext.SaveChangesAsync();

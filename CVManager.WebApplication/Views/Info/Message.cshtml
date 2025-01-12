@@ -12,5 +12,16 @@
             <input asp-for="MessageContent" class="form-control" />
         </div>
     </div>
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="form-group row">
+            <div class="col-sm-2">
+                <label>Ange ditt namn:</label>
+            </div>
+            <div class="col-sm-4">
+                <input asp-for="SenderName" class="form-control" placeholder="Ditt namn" />
+            </div>
+        </div>
+    }
     <button type="submit" class="btn btn-primary">Skicka meddelande</button>
 </form>

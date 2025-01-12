@@ -91,7 +91,7 @@ namespace CVManager.WebApplication.Controllers
                         await cVContext.SaveChangesAsync();
 
 
-                        return RedirectToAction("Login", "Account");
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {

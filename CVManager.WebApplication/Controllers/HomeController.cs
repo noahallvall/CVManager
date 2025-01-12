@@ -29,6 +29,7 @@ namespace CVManager.WebApplication.Controllers
             //H�mta data fr�n cvcontext --> bind till HomeViewModel --> returnera 
             //HomeViewModel till startvyn index. 
 
+            var isAuthenticated = User.Identity.IsAuthenticated;
 
             // H�mta data fr�n databasen
             var cvList = CVContext.CVs
@@ -39,6 +40,7 @@ namespace CVManager.WebApplication.Controllers
                 .Include(cv => cv.Skills)
                 .Include(cv => cv.Experiences)
                 .Include(cv => cv.Educations)
+                .Where(cv => !cv.User.IsPrivateProfile.HasValue || !cv.User.IsPrivateProfile.Value || isAuthenticated)
                 .ToList();
 
             var sortedProjects = cvList

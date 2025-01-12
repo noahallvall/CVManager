@@ -372,8 +372,9 @@ namespace CVManager.WebApplication.Controllers
                 cVContext.Projects.Update(projekt);
                 await cVContext.SaveChangesAsync();
 
-                return RedirectToAction("Home", "Index");
+                return RedirectToAction("Index", "Home");
             }
+
 
             return View(changeProjectViewModel);
         }

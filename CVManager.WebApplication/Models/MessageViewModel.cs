@@ -12,7 +12,7 @@ namespace CVManager.WebApplication.Models
         public int? CVSentId { get; set; }
         public int CVRecievedId { get; set; }
         public bool IsRead { get; set; }
-        public string Sender { get; set; }
+        public string? Sender { get; set; }
         public string Reciever { get; set; }
         public string? SenderName { get; set; }
     }

@@ -4,6 +4,7 @@ using CVManager.WebApplication.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CVManager.WebApplication.Controllers
 {
@@ -195,13 +196,12 @@ namespace CVManager.WebApplication.Controllers
 
             string messageId = Guid.NewGuid().ToString();
             
-            sender = user.Id;
+            
             reciever = userRecieve.Id;
 
             MessageViewModel messageViewModel = new MessageViewModel()
             {
                 MessageId = messageId,
-                Sender = sender,
                 Reciever = reciever
             };
 
@@ -219,7 +219,11 @@ namespace CVManager.WebApplication.Controllers
 
                 var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == messageViewModel.Reciever);
 
-                sender = user.Id;
+                if(user != null)
+                {
+                    sender = user.Id;
+                }
+
                 reciever = userRecieve.Id;
 
 
@@ -251,6 +255,7 @@ namespace CVManager.WebApplication.Controllers
                     message.CVSentId = senderCVId;
                 } else
                 {
+                    message.SendersName = messageViewModel.SenderName;
                     message.CVSentId = null;
                 }
 

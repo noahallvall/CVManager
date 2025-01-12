@@ -4,8 +4,7 @@ namespace CVManager.WebApplication.Models
 {
     public class KonversationerViewModel
     {
-        public Message Message;
-        public CV cV;
-        public User user;
+        public List<Message>? RecievedMessages { get; set; }
+        public List<Message>? SentMessages { get; set; }
     }
 }

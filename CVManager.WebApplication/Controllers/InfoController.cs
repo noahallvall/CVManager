@@ -254,12 +254,20 @@ namespace CVManager.WebApplication.Controllers
                     .Select(cv => cv.CVId) // Välj endast CVId
                     .FirstOrDefault();
 
+                var senderCV = cVContext.CVs
+                    .Where(cv => cv.CVId == senderCVId)
+                    .FirstOrDefault();
+
+                var senderName = cVContext.Users
+                    .Where(u => u.Id == senderCV.UserId)
+                    .FirstOrDefault();
+
                 var recieverCVId = cVContext.CVs
                     .Where(cv => cv.UserId == reciever)
                     .Select(cv => cv.CVId)
                     .FirstOrDefault();
 
-
+                
 
                 Message message = new Message()
                 {
@@ -273,6 +281,8 @@ namespace CVManager.WebApplication.Controllers
                 if (user != null)
                 {
                     message.CVSentId = senderCVId;
+                    message.SendersName = (senderName.FirstName + " " + senderName.LastName);
+                    
                 } else
                 {
                     message.SendersName = messageViewModel.SenderName;
@@ -302,37 +312,14 @@ namespace CVManager.WebApplication.Controllers
                 .Where(m => m.CVRecievedId == reciever.CVId)
                 .ToList();
 
-            List<CV> CVsAttSkicka = new List<CV>();
-
-            foreach (var message in messages) {
-                var matchandeCVs = cVContext.CVs
-                    .Where(c => c.CVId == message.CVSentId)
-                    .ToList();
-
-                CVsAttSkicka.AddRange(matchandeCVs);
-            }
-
-            List<User> users = new List<User>();
-
-            foreach (var CV in CVsAttSkicka)
+            KonversationerViewModel konversationerViewModel = new KonversationerViewModel()
             {
-                var matchandeUser = cVContext.Users
-                    .Where(u => u.Id == CV.UserId)
-                    .ToList();
-
-                users.AddRange(matchandeUser);
-            }
-
-            List<string> AllaNamn = new List<string>(); 
-
-            foreach(var uuser in users)
-            {
-                AllaNamn.Add(uuser.FirstName + " "+ uuser.LastName);
-            }
+                RecievedMessages = messages
+            };
 
             
 
-            return View();
+            return View(konversationerViewModel);
         }
     }
 }

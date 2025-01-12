@@ -1,13 +1,25 @@
-﻿@model IEnumerable<CVManager.WebApplication.Models.KonversationerViewModel>
+﻿@model KonversationerViewModel
 @if (Model != null)
 {
-    foreach (var konversation in @Model)
+    <h1>Mottagna meddelanden:</h1>
+    foreach (var konversation in Model.RecievedMessages)
     {
         <div>
-            
-            <form method="get" asp-controller="Info" asp-action="Meddelande">
-                <input type="hidden" name="id" value="" />
-                <button type="submit">Visa Konversation</button>
+            <h2>Meddelande från: @konversation.SendersName</h2>
+            <p>@konversation.MessageContent</p>
+            @if(konversation.IsRead == true)
+            {
+                <p>Meddelande markerat som läst!</p>
+            } else {
+                <p>Meddelande inte markerat som läst!</p>
+            }
+            <form method="get" asp-controller="Info" asp-action="Message">
+                <input type="hidden" name="id" value="@konversation.CVSentId" />
+                <button type="submit">Svara.</button>
+            </form>
+            <form method="post" asp-controller="Info" asp-action="MessageRead">
+                <input type="hidden" name="isRead" value="True" />
+                <button type="submit">Markera som läst.</button>
             </form>
         </div>
     }

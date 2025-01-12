@@ -43,7 +43,7 @@
 
             <p><strong>About me:</strong> @cv.Summary</p>
 
-            <p>Skills</p>
+            <p><strong>Skills</strong></p>
             <ul>
                 @foreach (var skill in cv.Skills)
                 {
@@ -51,21 +51,26 @@
                 }
             </ul>
 
-            <p>Experiences</p>
+            <p><strong>Experiences</strong></p>
             <ul>
                 @foreach (var experience in cv.Experiences)
                 {
-                    <li>@experience.CompanyName</li>
-                    <li>@experience.Role</li>
+
+                    <li>Company: @experience.CompanyName <br />
+                        Position: @experience.Role</li>
+                    
                 }
             </ul>
 
-            <p>Education</p>
+            <p><strong>Education</strong></p>
             <ul>
                 @foreach (var education in cv.Educations)
                 {
-                    <li>@education.Institution</li>
-                    <li>@education.EducationName</li>
+                    
+                    <li>University: @education.Institution <br />
+                        Program: @education.EducationName</li>
+                    
+                    
                 }
             </ul>
         </div>

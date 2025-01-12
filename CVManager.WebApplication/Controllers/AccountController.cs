@@ -245,14 +245,30 @@ namespace CVManager.WebApplication.Controllers
                 }
 
                 var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
+                var existingSkill = await cVContext.Skills
+                 .FirstOrDefaultAsync(s => s.SkillName == cVAltViewModel.SkillName && s.CVId == cv.CVId);
+                Console.WriteLine("Lyckades komma hit");
 
-                Skill skill = new Skill()
+                if (existingSkill == null)
                 {
+                    
+                    
+                    Skill skill = new Skill()
+                    {
+                        SkillName = cVAltViewModel.SkillName,
+                        CVId = cv.CVId
+                        
+                    };
+                    cVContext.Skills.Update(skill);
+                    await cVContext.SaveChangesAsync();
 
-                    SkillName = cVAltViewModel.SkillName,
-                    CVId = cv.CVId
+                   
+                }
+                else
+                {
+                    Console.WriteLine("Färdigheten finns redan i CV:t");
+                }
 
-                };
 
                 Education education = new Education()
                 {
@@ -284,8 +300,7 @@ namespace CVManager.WebApplication.Controllers
                 cVContext.Experiences.Update(experience);
                 await cVContext.SaveChangesAsync();
                 cVContext.Educations.Update(education);
-                cVContext.Skills.Update(skill);
-                await cVContext.SaveChangesAsync();
+                
                 cVContext.CVs.Update(cv);
                 await cVContext.SaveChangesAsync();
 
@@ -293,6 +308,122 @@ namespace CVManager.WebApplication.Controllers
             }
             return View(cVAltViewModel);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CVAltTaBortSkills(CVAltViewModel cVAltViewModel)
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                Console.WriteLine("Ej inloggad");
+                return NotFound();
+            }
+
+            // Hämta CV kopplat till användaren
+            var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+            if (cv == null)
+            {
+                Console.WriteLine("CV kan ej hittas");
+                return NotFound();
+            }
+
+            // Hämta alla skills kopplade till CVt
+            var skillsToRemove = await cVContext.Skills
+                .Where(s => s.CVId == cv.CVId)
+                .ToListAsync();
+
+            if (skillsToRemove.Any())
+            {
+                // Tar bort alla skills
+                cVContext.Skills.RemoveRange(skillsToRemove);
+                await cVContext.SaveChangesAsync();
+                Console.WriteLine("Alla färdigheter har tagits bort.");
+            }
+            else
+            {
+                Console.WriteLine("Inga färdigheter att ta bort.");
+            }
+
+            // Omdirigera efter borttagningen
+            return RedirectToAction("CVAlt", "Account"); 
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> CVAltTaBortEducations(CVAltViewModel cVAltViewModel)
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                Console.WriteLine("Ej inloggad");
+                return NotFound();
+            }
+
+            
+            var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+            if (cv == null)
+            {
+                Console.WriteLine("CV kan ej hittas");
+                return NotFound();
+            }
+
+            
+            var EducationsToRemove = await cVContext.Educations
+                .Where(s => s.CVId == cv.CVId)
+                .ToListAsync();
+
+            if (EducationsToRemove.Any())
+            {
+                
+                cVContext.Educations.RemoveRange(EducationsToRemove);
+                await cVContext.SaveChangesAsync();
+                
+            }
+
+            
+            return RedirectToAction("CVAlt", "Account");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CVAltTaBortExperiences(CVAltViewModel cVAltViewModel)
+        {
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                Console.WriteLine("Ej inloggad");
+                return NotFound();
+            }
+
+            
+            var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+            if (cv == null)
+            {
+                Console.WriteLine("CV kan ej hittas");
+                return NotFound();
+            }
+
+            
+            var ExperiencesToRemove = await cVContext.Experiences
+                .Where(s => s.CVId == cv.CVId)
+                .ToListAsync();
+
+            if (ExperiencesToRemove.Any())
+            {
+               
+                cVContext.Experiences.RemoveRange(ExperiencesToRemove);
+                await cVContext.SaveChangesAsync();
+            }
+
+
+
+            return RedirectToAction("CVAlt", "Account");
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> ProjektAlt()

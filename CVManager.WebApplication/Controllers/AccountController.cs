@@ -250,6 +250,7 @@ namespace CVManager.WebApplication.Controllers
                 }
 
                 var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
+
                 var existingSkill = await cVContext.Skills
                  .FirstOrDefaultAsync(s => s.SkillName == cVAltViewModel.SkillName && s.CVId == cv.CVId);
                 

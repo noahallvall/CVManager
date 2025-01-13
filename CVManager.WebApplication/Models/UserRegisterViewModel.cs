@@ -6,6 +6,11 @@ namespace CVManager.WebApplication.Models
     {
         [Required(ErrorMessage = "Vänligen skriv ett användarnamn.")]
         [StringLength(255, ErrorMessage = "Användarnamnet får inte vara längre än 255 tecken.")]
+        [RegularExpression(@"^[a-zA-Z0-9]+$",
+            ErrorMessage = "Användarnamnet får endast innehålla bokstäver (a-z, A-Z) och siffror (0-9). Inga specialtecken som å, ä, ö eller mellanslag är tillåtna.")]
+
+
+
         public string AnvandarNamn { get; set; }
 
         [Required(ErrorMessage = "Vänligen skriv ett lösenord.")]

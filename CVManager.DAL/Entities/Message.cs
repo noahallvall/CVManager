@@ -19,6 +19,7 @@ namespace CVManager.DAL.Entities
         public bool IsRead  { get; set; }
 
         public string? SendersName { get; set; }
+        public string? RecieversName { get; set; }
 
         public CV CV { get; set; }
     }

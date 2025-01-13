@@ -1,9 +1,12 @@
 ﻿using CVManager.DAL.Context;
 using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CVManager.WebApplication.Controllers
@@ -14,16 +17,19 @@ namespace CVManager.WebApplication.Controllers
         private UserManager<User> userManager;
         private string reciever;
         private string sender;
+        public int Antal;
 
         public InfoController(UserManager<User> userMngr, CVContext context)
         {
             this.cVContext = context;
             this.userManager = userMngr;
+            
         }
 
         [HttpGet]
         public IActionResult Projekt()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             ProjektViewModel projektViewModel = new ProjektViewModel();
             return View(projektViewModel);
         }
@@ -31,15 +37,11 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> CV(int id)
         {
-
-            Console.WriteLine(id.ToString());  
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
+            Console.WriteLine(id.ToString());
             if (id != 0)
             {
                 Console.WriteLine(id.ToString());
-
-                var uuser = await userManager.GetUserAsync(User);
-
-
 
                 // Hämta användaren och deras enda CV
                 var cv = cVContext.CVs
@@ -63,15 +65,37 @@ namespace CVManager.WebApplication.Controllers
                 // Skicka användardata och det kopplade cv:t till vyn 
 
                 return View(cvViewModel);
+            } else if (id == 0)
+            {
+
+
+                var user = await userManager.GetUserAsync(User);
+
+                var cv = cVContext.CVs
+                    .Include(c => c.User)
+                    .Include(c => c.CVProjects)
+                    .ThenInclude(cp => cp.Project)
+                    .FirstOrDefault(c => c.UserId == user.Id);
+
+                CvViewModel cvViewModel = new CvViewModel()
+                {
+                    User = user,
+                    CV = user.CV
+                };
+                return View(cvViewModel);
             }
+
+
             return RedirectToAction("Index", "Home");
+
         }
 
 
         [HttpPost]
         public async Task<IActionResult> Projekt(ProjektViewModel projektViewModel)
         {
-            if(ModelState.IsValid)
+
+            if (ModelState.IsValid)
             {
 
                 var uuser = await userManager.GetUserAsync(User);
@@ -90,7 +114,7 @@ namespace CVManager.WebApplication.Controllers
                 cVContext.Projects.Add(projekt);
                 await cVContext.SaveChangesAsync();
 
-                
+
 
                 var cvProject = new CVProject
                 {
@@ -174,6 +198,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public IActionResult VisaProjekt()
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var allaProjekt = cVContext.Projects
                 .Select(p => new VisaProjektViewModel
                 {
@@ -190,13 +215,14 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Message(string id)
         {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var user = await userManager.GetUserAsync(User);
 
             var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == id);
 
             string messageId = Guid.NewGuid().ToString();
-            
-            
+
+
             reciever = userRecieve.Id;
 
             MessageViewModel messageViewModel = new MessageViewModel()
@@ -205,7 +231,7 @@ namespace CVManager.WebApplication.Controllers
                 Reciever = reciever
             };
 
-            
+
 
             return View(messageViewModel);
         }
@@ -219,7 +245,7 @@ namespace CVManager.WebApplication.Controllers
 
                 var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == messageViewModel.Reciever);
 
-                if(user != null)
+                if (user != null)
                 {
                     sender = user.Id;
                 }
@@ -227,11 +253,19 @@ namespace CVManager.WebApplication.Controllers
                 reciever = userRecieve.Id;
 
 
-                
+
 
                 var senderCVId = cVContext.CVs
                     .Where(cv => cv.UserId == sender) // Filtrera på UserId
                     .Select(cv => cv.CVId) // Välj endast CVId
+                    .FirstOrDefault();
+
+                var senderCV = cVContext.CVs
+                    .Where(cv => cv.CVId == senderCVId)
+                    .FirstOrDefault();
+
+                var senderName = cVContext.Users
+                    .Where(u => u.Id == senderCV.UserId)
                     .FirstOrDefault();
 
                 var recieverCVId = cVContext.CVs
@@ -245,7 +279,7 @@ namespace CVManager.WebApplication.Controllers
                 {
                     MessageId = messageViewModel.MessageId,
                     MessageContent = messageViewModel.MessageContent,
-                    
+
                     CVRecievedId = recieverCVId,
                     IsRead = false
                 };
@@ -253,10 +287,15 @@ namespace CVManager.WebApplication.Controllers
                 if (user != null)
                 {
                     message.CVSentId = senderCVId;
+                    message.SendersName = (senderName.FirstName + " " + senderName.LastName);
+                    message.RecieversName = (userRecieve.FirstName + " " + userRecieve.LastName);
+                    
+                    
                 } else
                 {
                     message.SendersName = messageViewModel.SenderName;
                     message.CVSentId = null;
+                    message.RecieversName = (userRecieve.FirstName + " " + userRecieve.LastName);
                 }
 
                 cVContext.Messages.Add(message);
@@ -268,5 +307,89 @@ namespace CVManager.WebApplication.Controllers
 
             return View(messageViewModel);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Konversationer()
+        {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
+            var user = await userManager.GetUserAsync(User);
+
+            var reciever = cVContext.CVs
+                .Where(cv => cv.UserId == user.Id)
+                .FirstOrDefault();
+
+
+            var recievedMessages = cVContext.Messages
+                .Where(m => m.CVRecievedId == reciever.CVId)
+                .ToList();
+
+            var sentMessages = cVContext.Messages
+                .Where(m => m.CVSentId == reciever.CVId)
+                .ToList();
+
+            var CVs = cVContext.CVs
+                .ToList();
+
+            var users = cVContext.Users
+                .ToList();
+
+            KonversationerViewModel konversationerViewModel = new KonversationerViewModel()
+            {
+                RecievedMessages = recievedMessages,
+                SentMessages = sentMessages,
+                Users = users,
+                CVS = CVs
+            };
+
+            
+
+            return View(konversationerViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Konversationer(string messageId)
+        {
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
+            GlobalData.OlastaMeddelandenCount -= 1;
+            var message = await cVContext.Messages.FirstOrDefaultAsync(m => m.MessageId == messageId);
+
+            message.IsRead = true;
+
+            cVContext.Messages.Update(message);
+            await cVContext.SaveChangesAsync();
+
+            var user = await userManager.GetUserAsync(User);
+
+            var reciever = cVContext.CVs
+                .Where(cv => cv.UserId == user.Id)
+                .FirstOrDefault();
+
+
+            var recievedMessages = cVContext.Messages
+                .Where(m => m.CVRecievedId == reciever.CVId)
+                .ToList();
+
+            var sentMessages = cVContext.Messages
+                .Where(m => m.CVSentId == reciever.CVId)
+                .ToList();
+
+            var CVs = cVContext.CVs
+                .ToList();
+
+            var users = cVContext.Users
+                .ToList();
+
+            KonversationerViewModel konversationerViewModel = new KonversationerViewModel()
+            {
+                RecievedMessages = recievedMessages,
+                SentMessages = sentMessages,
+                Users = users,
+                CVS = CVs
+            };
+
+            return View(konversationerViewModel);
+        }
+
+        
     }
 }

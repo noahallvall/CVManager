@@ -248,6 +248,9 @@ namespace CVManager.WebApplication.Controllers
                     Console.WriteLine("Ej inloggad");
                     return NotFound();
                 }
+                string fileName = cVAltViewModel.ProfilePicturePath;
+                FileInfo f = new FileInfo(fileName);
+                string Fullname = f.FullName;
 
                 var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
@@ -366,13 +369,16 @@ namespace CVManager.WebApplication.Controllers
                     return NotFound();
                 }
 
+                cv.ProfilePicturePath = Fullname;
+
+
                 cv.Summary = cVAltViewModel.Summary;
                 cv.ProfilePicturePath=cv.ProfilePicturePath;
                 
                 cVContext.CVs.Update(cv);
                 await cVContext.SaveChangesAsync();
 
-                return RedirectToAction("Index", "Home");
+                return View(cVAltViewModel);
             }
             return View(cVAltViewModel);
         }
@@ -579,5 +585,48 @@ namespace CVManager.WebApplication.Controllers
 
             return View(changeProjectViewModel);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                // Kontrolleras att det är en fil
+                if (!file.ContentType.StartsWith("image/"))
+                {
+                    ModelState.AddModelError("file", "Endast bilder kan laddas upp.");
+                    return View();  
+                }
+
+                // Skapar filnamn
+                var fileName = Path.GetFileName(file.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+
+                // Spara filen 
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var user = await userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    var cv = cVContext.CVs.FirstOrDefault(c => c.UserId == user.Id);
+                    if (cv != null)
+                    {
+                        cv.ProfilePicturePath = "/uploads/" + fileName;  
+                        cVContext.Update(cv);
+                        await cVContext.SaveChangesAsync();
+                    }
+                }
+
+                ViewData["Message"] = "Bilden har laddats upp!";
+                return View();
+            }
+
+            ModelState.AddModelError("file", "Ingen fil valdes.");
+            return View();  
+        }
+
     }
 }

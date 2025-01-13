@@ -232,9 +232,9 @@ namespace CVManager.WebApplication.Controllers
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var user = await userManager.GetUserAsync(User);
 
-            var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == id);
+            var userRecieve = cVContext.Users.FirstOrDefault(u => u.Id == id); //Hämtar användare som har tagit emot meddelande, utifrån CVId
 
-            string messageId = Guid.NewGuid().ToString();
+            string messageId = Guid.NewGuid().ToString(); //Skapar en GUID för att ge varje meddelande ett unikt id
 
 
             reciever = userRecieve.Id;
@@ -276,16 +276,16 @@ namespace CVManager.WebApplication.Controllers
 
                 var senderCV = cVContext.CVs
                     .Where(cv => cv.CVId == senderCVId)
-                    .FirstOrDefault();
+                    .FirstOrDefault(); // Välj CV som skickat
 
                 var senderName = cVContext.Users
                     .Where(u => u.Id == senderCV.UserId)
-                    .FirstOrDefault();
+                    .FirstOrDefault(); //Välj namn som skickat har
 
                 var recieverCVId = cVContext.CVs
                     .Where(cv => cv.UserId == reciever)
                     .Select(cv => cv.CVId)
-                    .FirstOrDefault();
+                    .FirstOrDefault(); // Hämtar mottagarens CVId utifrån UserId
 
                 
 
@@ -298,7 +298,7 @@ namespace CVManager.WebApplication.Controllers
                     IsRead = false
                 };
 
-                if (user != null)
+                if (user != null) //Checkar ifall ett senderCVId ska finnas. Ifall en ej inloggad person skickar ett meddelande ska det inte finnas
                 {
                     message.CVSentId = senderCVId;
                     message.SendersName = (senderName.FirstName + " " + senderName.LastName);
@@ -327,6 +327,11 @@ namespace CVManager.WebApplication.Controllers
         {
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             var user = await userManager.GetUserAsync(User);
+
+
+            // Frågorna under hämtar relevanta frågor. 
+            // De hämtar alla frågor som man skickat
+            // Och även de du har mottagit
 
             var reciever = cVContext.CVs
                 .Where(cv => cv.UserId == user.Id)
@@ -366,6 +371,8 @@ namespace CVManager.WebApplication.Controllers
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             GlobalData.OlastaMeddelandenCount -= 1;
             var message = await cVContext.Messages.FirstOrDefaultAsync(m => m.MessageId == messageId);
+            // När du klickar på "Markera som läst" så tas messageId med i parametern så man vet vilket meddelande som klickats på. 
+            // och kodraden ovanför kommentaren hämtar det meddelandet, sedan händer det under
 
             message.IsRead = true;
 

@@ -6,5 +6,7 @@
         public string ProjectName { get; set; }
         public string ProjectDescription { get; set; }
         public DateTime? UploadDate { get; set; }
+
+        public List<string> UsersInProject { get; set; }
     }
 }

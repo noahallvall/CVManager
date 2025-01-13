@@ -50,11 +50,11 @@ namespace CVManager.WebApplication.Controllers
                     .ThenInclude(cp => cp.Project)
                     .FirstOrDefault(c => c.CVId == id);
 
-                User user;
+                //User user;
                 CvViewModel cvViewModel = new CvViewModel();
 
 
-                user = await cVContext.Users.FindAsync(cv.UserId);
+               User user = await cVContext.Users.FindAsync(cv.UserId);
 
                 cvViewModel = new CvViewModel()
                 {
@@ -198,14 +198,28 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public IActionResult VisaProjekt()
         {
+            var IsAuthenticated = User.Identity.IsAuthenticated;
+
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
+
             var allaProjekt = cVContext.Projects
+                .Include(p => p.CVProjects) // Ladda sambandstabellen
+                .ThenInclude(cp => cp.CV) // Ladda CV:n kopplade till projektet
+                .ThenInclude(cv => cv.User) // Ladda användare kopplade till CV:n
+                .Where(p => p.CVProjects.Any(cp =>
+                    !cp.CV.User.IsPrivateProfile.HasValue ||
+                    !cp.CV.User.IsPrivateProfile.Value ||
+                    IsAuthenticated)) // Filtrera bort projekt kopplade till privata profiler
+
                 .Select(p => new VisaProjektViewModel
                 {
                     ProjectID = p.ProjectId,
                     ProjectName = p.ProjectName,
                     ProjectDescription = p.ProjectDescription,
-                    UploadDate = p.UploadDate
+                    UploadDate = p.UploadDate,
+                    UsersInProject = p.CVProjects 
+                        .Select(cp => cp.CV.User.UserName) // Hämta användarnamn på användare
+                        .ToList() // Konvertera till lista
                 })
                 .ToList();
 

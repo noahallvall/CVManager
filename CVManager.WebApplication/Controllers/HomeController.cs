@@ -30,16 +30,16 @@ namespace CVManager.WebApplication.Controllers
         public async Task<IActionResult> Index()
         {
 
-            //H�r ska startsidans lista med CVs och projekt returneras.
-            //H�mta data fr�n cvcontext --> bind till HomeViewModel --> returnera 
+            //Här ska startsidans lista med CVs och projekt returneras.
+            //H�mta data från cvcontext --> bind till HomeViewModel --> returnera 
             //HomeViewModel till startvyn index. 
 
             var isAuthenticated = User.Identity.IsAuthenticated;
 
-            // H�mta data fr�n databasen
+            // H�mta data från databasen
             var cvList = CVContext.CVs
              
-                .Include(cv => cv.User) // Ladda anv�ndarinformation
+                .Include(cv => cv.User) // Ladda användarinformation
                 .Include(cv => cv.CVProjects) // Ladda sambandstabellen
                 .ThenInclude(cp => cp.Project) // Ladda kopplade projekt
                 .Include(cv => cv.Skills)
@@ -50,9 +50,9 @@ namespace CVManager.WebApplication.Controllers
 
             var sortedProjects = cvList
                  .SelectMany(cv => cv.CVProjects)
-                 .Where(cp => cp.Project != null) // Ensure project is not null
-                 .Select(cp => cp.Project) // Select project entity
-                 .OrderByDescending(p => p.UploadDate) // Sort by latest upload date
+                 .Where(cp => cp.Project != null) 
+                 .Select(cp => cp.Project) 
+                 .OrderByDescending(p => p.UploadDate) 
                  .ToList();
 
             // Skapa och fyll HomeViewModel

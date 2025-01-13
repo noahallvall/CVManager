@@ -7,6 +7,7 @@
             <th>Projekt Namn</th>
             <th>Beskrivning</th>
             <th>Uppladdningsdatum</th>
+            <th>Användare i projektet</th>
         </tr>
     </thead>
     <tbody>
@@ -16,16 +17,21 @@
                 <td>@projekt.ProjectID</td>
                 <td>@projekt.ProjectName</td>
                 <td>@projekt.ProjectDescription</td>
+                <td>@(projekt.UploadDate.HasValue ? projekt.UploadDate.Value.ToString("yyyy-MM-dd") : "1970-01-01")</td>
                 <td>
-                    @if (projekt.UploadDate.HasValue)
+                    @if (projekt.UsersInProject.Any())
                     {
-                        @projekt.UploadDate.Value.ToString("yyyy-MM-dd")
+                        <ul>
+                            @foreach (var user in projekt.UsersInProject)
+                            {
+                                <li>@user</li>
+                            }
+                        </ul>
                     }
                     else
                     {
-                        @("1970-01-01")
+                        <span>Inga användare</span>
                     }
-
                 </td>
             </tr>
         }

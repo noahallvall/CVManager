@@ -247,7 +247,19 @@ namespace CVManager.WebApplication.Controllers
                 var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
                 var existingSkill = await cVContext.Skills
                  .FirstOrDefaultAsync(s => s.SkillName == cVAltViewModel.SkillName && s.CVId == cv.CVId);
-                Console.WriteLine("Lyckades komma hit");
+                
+
+                var existingEdNa = await cVContext.Educations
+                 .FirstOrDefaultAsync(s => s.EducationName == cVAltViewModel.EducationName && s.CVId == cv.CVId);
+
+                var existingEdIn = await cVContext.Educations
+                 .FirstOrDefaultAsync(s => s.Institution == cVAltViewModel.Institution && s.CVId == cv.CVId);
+
+                var existingExCoNa = await cVContext.Experiences
+                 .FirstOrDefaultAsync(s => s.CompanyName == cVAltViewModel.CompanyName && s.CVId == cv.CVId);
+
+                var existingExCoRo = await cVContext.Experiences
+                 .FirstOrDefaultAsync(s => s.Role == cVAltViewModel.Role && s.CVId == cv.CVId);
 
                 if (existingSkill == null)
                 {
@@ -258,9 +270,20 @@ namespace CVManager.WebApplication.Controllers
                         SkillName = cVAltViewModel.SkillName,
                         CVId = cv.CVId
                         
+                        
                     };
-                    cVContext.Skills.Update(skill);
-                    await cVContext.SaveChangesAsync();
+                    if (cVAltViewModel.SkillName == null)
+                    {
+                        Console.WriteLine("Inget hände");
+                    }
+                    else
+                    {
+                        cVContext.Skills.Update(skill);
+                        await cVContext.SaveChangesAsync();
+                       
+
+                    }
+                    
 
                    
                 }
@@ -269,24 +292,67 @@ namespace CVManager.WebApplication.Controllers
                     Console.WriteLine("Färdigheten finns redan i CV:t");
                 }
 
-
-                Education education = new Education()
+                if(existingEdNa == null || existingEdIn == null)
                 {
 
-                    Institution = cVAltViewModel.Institution,
-                    EducationName= cVAltViewModel.EducationName,
-                    CVId = cv.CVId
 
-                };
+                    Education education = new Education()
+                    {
 
-                Experience experience = new Experience()
+                        Institution = cVAltViewModel.Institution,
+                        EducationName = cVAltViewModel.EducationName,
+                        CVId = cv.CVId
+
+                    };
+                    if (cVAltViewModel.Institution == null && cVAltViewModel.EducationName ==null)
+                    {
+                        Console.WriteLine("Inget hände");
+                    }
+                    else
+                    {
+                        cVContext.Educations.Update(education);
+                        await cVContext.SaveChangesAsync();
+                        
+
+                    }
+                    
+                }
+                else
                 {
+                    Console.WriteLine("Education finns redan i CV:t");
+                }
 
-                    CompanyName = cVAltViewModel.CompanyName,
-                    Role = cVAltViewModel.Role,
-                    CVId = cv.CVId
 
-                };
+                if(existingExCoNa  ==null || existingExCoRo == null )
+                {
+                    Experience experience = new Experience()
+                    {
+
+                        CompanyName = cVAltViewModel.CompanyName,
+                        Role = cVAltViewModel.Role,
+                        CVId = cv.CVId
+
+                    };
+                    if (cVAltViewModel.CompanyName == null && existingExCoRo == null)
+                    {
+                        Console.WriteLine("Inget hände");
+                    }
+                    else
+                    {
+                        cVContext.Experiences.Update(experience);
+                        await cVContext.SaveChangesAsync();
+                        
+
+                    }
+                    
+
+                }
+                else
+                {
+                    Console.WriteLine("Education finns redan i CV:t");
+                }
+
+
 
                 if (cv == null)
                 {
@@ -296,10 +362,6 @@ namespace CVManager.WebApplication.Controllers
 
                 cv.Summary = cVAltViewModel.Summary;
                 cv.ProfilePicturePath=cv.ProfilePicturePath;
-
-                cVContext.Experiences.Update(experience);
-                await cVContext.SaveChangesAsync();
-                cVContext.Educations.Update(education);
                 
                 cVContext.CVs.Update(cv);
                 await cVContext.SaveChangesAsync();

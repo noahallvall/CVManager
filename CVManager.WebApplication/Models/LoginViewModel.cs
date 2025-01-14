@@ -16,6 +16,9 @@ namespace CVManager.WebApplication.Models
          ErrorMessage = "Lösenordet måste innehålla minst en stor bokstav, en liten bokstav, en siffra och ett specialtecken.")]
 
         public string Losenord { get; set; }
+        
+        [Required(ErrorMessage = "Felaktigt lösenord, vänligen försök igen.")]
+        
 
         public bool RememberMe { get; set; }
     }

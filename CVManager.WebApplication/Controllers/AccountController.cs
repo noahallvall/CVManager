@@ -50,6 +50,10 @@ namespace CVManager.WebApplication.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
+                else
+                {
+                    ModelState.AddModelError("Losenord", "Felaktigt lösenord, vänligen försök igen.");
+                }
             }
             return View(loginViewModel);
         }

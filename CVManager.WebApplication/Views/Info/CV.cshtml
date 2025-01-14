@@ -26,7 +26,7 @@
     <img src="@Url.Content(Model.CV.ProfilePicturePath)" alt="Profile Picture" style="width: 150px; height: 150px;" />
 
     <p><strong>About me:</strong> @Model.CV.Summary</p>
-
+ 
     <h3>Skills</h3>
     <ul>
         @if (Model.CV.Skills != null && Model.CV.Skills.Any())
@@ -96,5 +96,7 @@
             <li>No projects available.</li>
         }
     </ul>
+  
+
 </div>
 

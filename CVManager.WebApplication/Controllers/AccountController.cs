@@ -240,6 +240,8 @@ namespace CVManager.WebApplication.Controllers
             
             //Skapar en viewmodel med överensstämmande data
 
+
+
             return View(cVAltViewModel);
         }
 

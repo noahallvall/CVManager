@@ -1,0 +1,106 @@
+﻿@model IEnumerable<CVManager.WebApplication.Models.SearchUserViewModel>
+
+<h2>Sök Användare</h2>
+
+<form method="get" asp-action="SearchUser">
+    <div class="form-group">
+        <label for="searchTerm">Sök efter användare:</label>
+        <input type="text" id="searchTerm" name="namn" class="form-control" placeholder="Ange namn" />
+    </div>
+    <button type="submit" class="btn btn-primary">Sök</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <!-- First Table: User Information -->
+    <h3>Användare</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fullt Namn</th>
+                <th>Profilstatus</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>@(user.IsPrivateProfile ? "Privat" : "Offentlig")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Second Table: CV Information -->
+    @foreach (var user in Model)
+    {
+        <div class="user-cv">
+            <h4>@user.FullName's CV</h4>
+
+            @if (user.CV != null)
+            {
+                <p><strong>About user: </strong> @user.CV.Summary</p>
+
+                <h3>Skills</h3>
+                <ul>
+                    @if (user.CV.Skills != null && user.CV.Skills.Any())
+                    {
+                        @foreach (var skill in user.CV.Skills)
+                        {
+                            <li>@skill.SkillName</li>
+                        }
+                    }
+                    else
+                    {
+                        <li>No skills available.</li>
+                    }
+                </ul>
+
+                <h3>Experiences</h3>
+                <ul>
+                    @if (user.CV.Experiences != null && user.CV.Experiences.Any())
+                    {
+                        @foreach (var experience in user.CV.Experiences)
+                        {
+                            <li>
+                                <strong>Company:</strong> @experience.CompanyName <br />
+                                <strong>Role:</strong> @experience.Role
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li>No experiences available.</li>
+                    }
+                </ul>
+
+                <h3>Education</h3>
+                <ul>
+                    @if (user.CV.Educations != null && user.CV.Educations.Any())
+                    {
+                        @foreach (var education in user.CV.Educations)
+                        {
+                            <li>
+                                <strong>Institution:</strong> @education.Institution <br />
+                                <strong>Education:</strong> @education.EducationName
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li>No education records available.</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No CV available.</p>
+            }
+        </div>
+    }
+}
+else if (Model != null)
+{
+    <p>Inga användare hittades.</p>
+}

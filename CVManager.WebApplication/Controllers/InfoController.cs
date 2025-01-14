@@ -23,7 +23,7 @@ namespace CVManager.WebApplication.Controllers
         {
             this.cVContext = context;
             this.userManager = userMngr;
-            
+
         }
 
         [HttpGet]
@@ -54,7 +54,7 @@ namespace CVManager.WebApplication.Controllers
                 CvViewModel cvViewModel = new CvViewModel();
 
 
-               User user = await cVContext.Users.FindAsync(cv.UserId);
+                User user = await cVContext.Users.FindAsync(cv.UserId);
 
                 cvViewModel = new CvViewModel()
                 {
@@ -65,7 +65,8 @@ namespace CVManager.WebApplication.Controllers
                 // Skicka användardata och det kopplade cv:t till vyn 
 
                 return View(cvViewModel);
-            } else if (id == 0)
+            }
+            else if (id == 0)
             {
 
 
@@ -217,7 +218,7 @@ namespace CVManager.WebApplication.Controllers
                     ProjectName = p.ProjectName,
                     ProjectDescription = p.ProjectDescription,
                     UploadDate = p.UploadDate,
-                    UsersInProject = p.CVProjects 
+                    UsersInProject = p.CVProjects
                         .Select(cp => cp.CV.User.UserName) // Hämta användarnamn på användare
                         .ToList() // Konvertera till lista
                 })
@@ -287,7 +288,7 @@ namespace CVManager.WebApplication.Controllers
                     .Select(cv => cv.CVId)
                     .FirstOrDefault(); // Hämtar mottagarens CVId utifrån UserId
 
-                
+
 
                 Message message = new Message()
                 {
@@ -303,9 +304,10 @@ namespace CVManager.WebApplication.Controllers
                     message.CVSentId = senderCVId;
                     message.SendersName = (senderName.FirstName + " " + senderName.LastName);
                     message.RecieversName = (userRecieve.FirstName + " " + userRecieve.LastName);
-                    
-                    
-                } else
+
+
+                }
+                else
                 {
                     message.SendersName = messageViewModel.SenderName;
                     message.CVSentId = null;
@@ -360,7 +362,7 @@ namespace CVManager.WebApplication.Controllers
                 CVS = CVs
             };
 
-            
+
 
             return View(konversationerViewModel);
         }
@@ -411,6 +413,54 @@ namespace CVManager.WebApplication.Controllers
             return View(konversationerViewModel);
         }
 
-        
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> SearchUser(string namn)
+        {
+            // Kontrollera om användaren är inloggad
+            var isAuthenticated = User.Identity.IsAuthenticated;
+
+            if (string.IsNullOrWhiteSpace(namn))
+            {
+                ViewBag.Warning = "Vänligen ange ett för- eller efternamn för att söka.";
+                return View(new List<SearchUserViewModel>());
+            }
+
+            // Sök efter användare baserat på för- och/eller efternamn
+            var anvandare = await cVContext.Users
+                .Include(u => u.CV) // Ladda kopplat CV
+
+                .ThenInclude(cv => cv.Skills) // Ladda Skills kopplat till CV
+                    .Include(u => u.CV)
+                .ThenInclude(cv => cv.Experiences) // Ladda Experiences kopplat till CV
+                    .Include(u => u.CV)
+                .ThenInclude(cv => cv.Educations) // Ladda Educations kopplat till CV
+
+                .Where(u =>
+                    (isAuthenticated || !u.IsPrivateProfile.HasValue || !u.IsPrivateProfile.Value) && // Filtrera privata profiler
+                    ((u.FirstName + " " + u.LastName).Contains(namn) ||
+                     u.FirstName.Contains(namn) ||
+                     u.LastName.Contains(namn))) // Filtrera baserat på söktermen
+
+                .Select(u => new SearchUserViewModel
+                {
+                    FullName = u.FirstName + " " + u.LastName,
+                    IsPrivateProfile = u.IsPrivateProfile ?? false,
+                    CV = u.CV
+                })
+                .ToListAsync();
+
+            // Om inga användare hittas
+            if (!anvandare.Any())
+            {
+                ViewBag.Warning = "Inga användare hittades med det namnet.";
+            }
+
+            return View(anvandare);
+        }
+
+
     }
 }

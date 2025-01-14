@@ -14,7 +14,6 @@ namespace CVManager.WebApplication.Models
 
         public string? CompanyName   { get; set; }
 
-
         public string? ProfilePicturePath { get; set; }
 
     }

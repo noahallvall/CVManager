@@ -32,7 +32,7 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public IActionResult LogIn()
         {
-            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
+            ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString(); // Lägger in alla olästa meddelanden i viewbag
             LoginViewModel loginViewModel = new LoginViewModel();
             return View(loginViewModel);
         }
@@ -87,15 +87,15 @@ namespace CVManager.WebApplication.Controllers
                     {
                         Console.WriteLine("Funkar");
 
-                        var cv = new CV
+                        var cv = new CV //Skapar nytt CV kopplat till användaren
                         {
                             ProfilePicturePath = null, 
                             Summary = "",
                             UserId = user.Id
                         };
 
-                        cVContext.CVs.Add(cv);
-                        await cVContext.SaveChangesAsync();
+                        cVContext.CVs.Add(cv); //Lägger till entitet
+                        await cVContext.SaveChangesAsync(); //Sparar entitet i databas
 
 
                         return RedirectToAction("Index", "Home");
@@ -125,14 +125,14 @@ namespace CVManager.WebApplication.Controllers
         public async Task<IActionResult> KontoAlt()
         {
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
-            var user = await userManager.GetUserAsync(User);
+            var user = await userManager.GetUserAsync(User); //Hämtar aktuell användare
 
             if (user == null)
             {
                 Console.WriteLine("Användare ej inloggad");
             }
 
-            KontoAltViewModel kontoAltViewModel = new KontoAltViewModel
+            KontoAltViewModel kontoAltViewModel = new KontoAltViewModel //Skapar en ny vy med hjälp av data som är kopplad till användare
             {
                 FirstName = user?.FirstName,
                 LastName = user?.LastName,
@@ -161,14 +161,14 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound();
             }
 
-            var passwordCheck = await userManager.CheckPasswordAsync(user, kontoAltViewModel.CurrentPassword);
+            var passwordCheck = await userManager.CheckPasswordAsync(user, kontoAltViewModel.CurrentPassword); //Används för att kolla ifall det bekräftade lösenordet stämmer
             if (!passwordCheck)
             {
                 ModelState.AddModelError("CurrentPassword", "Nuvarande lösenord är felinmatat.");
                 return View(kontoAltViewModel); 
             }
 
-            if (!string.IsNullOrEmpty(kontoAltViewModel.Losenord))
+            if (!string.IsNullOrEmpty(kontoAltViewModel.Losenord)) //Kodblock för att kolla ifall det inmatade lösenordet är null eller tomt, då ska ingen ändring av lösenordet ske
             {
                 var passwordChangeResult = await userManager.ChangePasswordAsync(user, kontoAltViewModel.CurrentPassword, kontoAltViewModel.Losenord);
                 if (!passwordChangeResult.Succeeded)
@@ -182,6 +182,8 @@ namespace CVManager.WebApplication.Controllers
                 }
             }
 
+            //Här läggs all data i kontot
+
             user.FirstName = kontoAltViewModel.FirstName;
             user.LastName = kontoAltViewModel.LastName;
             user.Address = kontoAltViewModel.Address;
@@ -189,7 +191,7 @@ namespace CVManager.WebApplication.Controllers
             user.Email = kontoAltViewModel.Email;
             user.Phone = kontoAltViewModel.Phone;
 
-            var updateResult = await userManager.UpdateAsync(user);
+            var updateResult = await userManager.UpdateAsync(user); //Här updateras/sparas datan
 
             if (updateResult.Succeeded)
             {
@@ -218,12 +220,12 @@ namespace CVManager.WebApplication.Controllers
 
             var userId = user.Id;
             var cv = await cVContext.CVs
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+                .FirstOrDefaultAsync(c => c.UserId == userId); //Hämtar alla CV som hör till användare som hämtats tidigare
 
             
 
             var skill = await cVContext.Skills
-                .FirstOrDefaultAsync(c => c.CVId == cv.CVId);
+                .FirstOrDefaultAsync(c => c.CVId == cv.CVId); //Hämtar skills som hör till CV
 
             if (cv == null)
             {
@@ -236,6 +238,7 @@ namespace CVManager.WebApplication.Controllers
             cVAltViewModel.Summary = cv.Summary;
             cVAltViewModel.ProfilePicturePath = cv.ProfilePicturePath;
             
+            //Skapar en viewmodel med överensstämmande data
 
             return View(cVAltViewModel);
         }
@@ -252,6 +255,9 @@ namespace CVManager.WebApplication.Controllers
                     Console.WriteLine("Ej inloggad");
                     return NotFound();
                 }
+                string fileName = cVAltViewModel.ProfilePicturePath;
+                FileInfo f = new FileInfo(fileName);
+                string Fullname = f.FullName;
 
                 var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
@@ -370,13 +376,16 @@ namespace CVManager.WebApplication.Controllers
                     return NotFound();
                 }
 
+                cv.ProfilePicturePath = Fullname;
+
+
                 cv.Summary = cVAltViewModel.Summary;
                 cv.ProfilePicturePath=cv.ProfilePicturePath;
                 
                 cVContext.CVs.Update(cv);
                 await cVContext.SaveChangesAsync();
 
-                return RedirectToAction("Index", "Home");
+                return View(cVAltViewModel);
             }
             return View(cVAltViewModel);
         }
@@ -516,10 +525,10 @@ namespace CVManager.WebApplication.Controllers
 
 
             var allaProjekt = cVContext.Projects
-                .Where(p => p.ownerId == user.Id)
+                .Where(p => p.ownerId == user.Id) //Hämtar alla projekt som är skapade/ägda av den inloggade användaren
                 .Select(p => new ProjektAltViewModel
                 {
-                    ProjectName = p.ProjectName,
+                    ProjectName = p.ProjectName, //Här skapas ny viewmodel som har värdena av projekt i databasen
                     ProjectId = p.ProjectId,
                     ProjectDescription = p.ProjectDescription
                 })
@@ -535,7 +544,7 @@ namespace CVManager.WebApplication.Controllers
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             Console.WriteLine($"Project ID: {id}");
 
-            var projekt = cVContext.Projects.FirstOrDefault(p => p.ProjectId == id);
+            var projekt = cVContext.Projects.FirstOrDefault(p => p.ProjectId == id); //Hämtar projektId utifrån id i parameter
 
             if (projekt == null)
             {
@@ -565,6 +574,7 @@ namespace CVManager.WebApplication.Controllers
                 }
 
                 var projekt = await cVContext.Projects.FirstOrDefaultAsync(p => p.ProjectId == changeProjectViewModel.ProjectId);
+                // Hämtar projekt utifrån det projekts id som valts/sparats i viewmodel
 
                 if (projekt == null)
                 {
@@ -583,5 +593,48 @@ namespace CVManager.WebApplication.Controllers
 
             return View(changeProjectViewModel);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                // Kontrolleras att det är en fil
+                if (!file.ContentType.StartsWith("image/"))
+                {
+                    ModelState.AddModelError("file", "Endast bilder kan laddas upp.");
+                    return View();  
+                }
+
+                // Skapar filnamn
+                var fileName = Path.GetFileName(file.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+
+                // Spara filen 
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var user = await userManager.GetUserAsync(User);
+                if (user != null)
+                {
+                    var cv = cVContext.CVs.FirstOrDefault(c => c.UserId == user.Id);
+                    if (cv != null)
+                    {
+                        cv.ProfilePicturePath = "/uploads/" + fileName;  
+                        cVContext.Update(cv);
+                        await cVContext.SaveChangesAsync();
+                    }
+                }
+
+                ViewData["Message"] = "Bilden har laddats upp!";
+                return View();
+            }
+
+            ModelState.AddModelError("file", "Ingen fil valdes.");
+            return View();  
+        }
+
     }
 }

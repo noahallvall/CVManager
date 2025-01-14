@@ -282,20 +282,20 @@ namespace CVManager.WebApplication.Controllers
                 if (existingSkill == null)
                 {
                     
-                    
+                    //skapar objekt
                     Skill skill = new Skill()
                     {
                         SkillName = cVAltViewModel.SkillName,
                         CVId = cv.CVId
                         
                         
-                    };
+                    };//tittar ifall skillfältet skrevs in
                     if (cVAltViewModel.SkillName == null)
                     {
                         Console.WriteLine("Inget hände");
                     }
                     else
-                    {
+                    {//sparar skill
                         cVContext.Skills.Update(skill);
                         await cVContext.SaveChangesAsync();
                        
@@ -310,7 +310,7 @@ namespace CVManager.WebApplication.Controllers
                     Console.WriteLine("Färdigheten finns redan i CV:t");
                 }
 
-                if(existingEdNa == null || existingEdIn == null)
+                if(existingEdNa == null || existingEdIn == null) //kollar ifall det redan existerar i cvt
                 {
 
 
@@ -322,7 +322,7 @@ namespace CVManager.WebApplication.Controllers
                         CVId = cv.CVId
 
                     };
-                    if (cVAltViewModel.Institution == null && cVAltViewModel.EducationName ==null)
+                    if (cVAltViewModel.Institution == null && cVAltViewModel.EducationName ==null) //tittar fall fälten skrevs in
                     {
                         Console.WriteLine("Inget hände");
                     }
@@ -411,14 +411,14 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound();
             }
 
-            // Hämta alla skills kopplade till CVt
+            // Hämtar alla skills kopplade till CVt
             var skillsToRemove = await cVContext.Skills
                 .Where(s => s.CVId == cv.CVId)
                 .ToListAsync();
 
             if (skillsToRemove.Any())
             {
-                // Tar bort alla skills
+                // Tar bort alla skills 
                 cVContext.Skills.RemoveRange(skillsToRemove);
                 await cVContext.SaveChangesAsync();
                 Console.WriteLine("Alla färdigheter har tagits bort.");
@@ -428,7 +428,7 @@ namespace CVManager.WebApplication.Controllers
                 Console.WriteLine("Inga färdigheter att ta bort.");
             }
 
-            // Omdirigera efter borttagningen
+            
             return RedirectToAction("CVAlt", "Account"); 
         }
         

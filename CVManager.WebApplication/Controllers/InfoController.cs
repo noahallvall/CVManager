@@ -448,6 +448,9 @@ namespace CVManager.WebApplication.Controllers
                 {
                     FullName = u.FirstName + " " + u.LastName,
                     IsPrivateProfile = u.IsPrivateProfile ?? false,
+                    PhoneNumber = u.Phone, 
+                    Email = u.Email, 
+                    Address = u.Address, 
                     CV = u.CV
                 })
                 .ToListAsync();

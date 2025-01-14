@@ -40,6 +40,11 @@
 
             @if (user.CV != null)
             {
+                <p><strong>Phone: </strong> @user.PhoneNumber</p>
+                <p><strong>Mail: </strong> @user.Email</p>
+                <p><strong>Address: </strong> @user.Address</p>
+
+
                 <p><strong>About user: </strong> @user.CV.Summary</p>
 
                 <h3>Skills</h3>

@@ -48,7 +48,14 @@ namespace CVManager.WebApplication.Controllers
                 .Where(cv => !cv.User.IsPrivateProfile.HasValue || !cv.User.IsPrivateProfile.Value || isAuthenticated)
                 .ToList();
 
-            var sortedProjects = cvList
+            var projectList= CVContext.CVs
+
+                .Include(cv => cv.User) // Ladda användarinformation
+                .Include(cv => cv.CVProjects) // Ladda sambandstabellen
+                .ThenInclude(cp => cp.Project) // Ladda kopplade projekt
+                .ToList();
+
+            var sortedProjects = projectList
                  .SelectMany(cv => cv.CVProjects)
                  .Where(cp => cp.Project != null) 
                  .Select(cp => cp.Project) 

@@ -39,56 +39,67 @@ namespace CVManager.WebApplication.Controllers
         {
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             Console.WriteLine(id.ToString());
+
             if (id != 0)
             {
                 Console.WriteLine(id.ToString());
 
-                // Hämta användaren och deras enda CV
-                var cv = cVContext.CVs
-                    .Include(c => c.User)
-                    .Include(c => c.CVProjects)
-                    .ThenInclude(cp => cp.Project)
-                    .FirstOrDefault(c => c.CVId == id);
+                // Hämta användaren och deras enda CV med relaterade data (Eager Loading)
+                var cv = await cVContext.CVs
+                    .Include(c => c.User)                     // Include user details
+                    .Include(c => c.CVProjects)               // Include CV projects
+                        .ThenInclude(cp => cp.Project)        // Include projects within CV projects
+                    .Include(c => c.Skills)                  // Include skills
+                    .Include(c => c.Experiences)             // Include experiences
+                    .Include(c => c.Educations)              // Include educations
+                    .FirstOrDefaultAsync(c => c.CVId == id); // Find CV by ID
 
-                //User user;
-                CvViewModel cvViewModel = new CvViewModel();
+                if (cv == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
 
+                var user = await cVContext.Users.FindAsync(cv.UserId);
 
-                User user = await cVContext.Users.FindAsync(cv.UserId);
-
-                cvViewModel = new CvViewModel()
+                // Map data to the view model
+                var cvViewModel = new CvViewModel
                 {
                     User = user,
-                    CV = user.CV
+                    CV = cv
                 };
-
-                // Skicka användardata och det kopplade cv:t till vyn 
 
                 return View(cvViewModel);
             }
             else if (id == 0)
             {
-
-
+                // Get current user and their CV
                 var user = await userManager.GetUserAsync(User);
 
-                var cv = cVContext.CVs
-                    .Include(c => c.User)
-                    .Include(c => c.CVProjects)
-                    .ThenInclude(cp => cp.Project)
-                    .FirstOrDefault(c => c.UserId == user.Id);
+                var cv = await cVContext.CVs
+                    .Include(c => c.User)                     // Include user details
+                    .Include(c => c.CVProjects)               // Include CV projects
+                        .ThenInclude(cp => cp.Project)        // Include projects within CV projects
+                    .Include(c => c.Skills)                  // Include skills
+                    .Include(c => c.Experiences)             // Include experiences
+                    .Include(c => c.Educations)              // Include educations
+                    .FirstOrDefaultAsync(c => c.UserId == user.Id);
 
-                CvViewModel cvViewModel = new CvViewModel()
+                if (cv == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Map data to the view model
+                var cvViewModel = new CvViewModel
                 {
                     User = user,
-                    CV = user.CV
+                    CV = cv
                 };
+
                 return View(cvViewModel);
             }
 
-
             return RedirectToAction("Index", "Home");
-
         }
 
 

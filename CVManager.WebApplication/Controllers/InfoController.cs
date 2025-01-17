@@ -279,10 +279,7 @@ namespace CVManager.WebApplication.Controllers
                     .Where(cv => cv.CVId == senderCVId)
                     .FirstOrDefault(); // Välj CV som skickat
 
-                var senderName = cVContext.Users
-                    .Where(u => u.Id == senderCV.UserId)
-                    .FirstOrDefault(); //Välj namn som skickat har
-
+               
                 var recieverCVId = cVContext.CVs
                     .Where(cv => cv.UserId == reciever)
                     .Select(cv => cv.CVId)
@@ -301,6 +298,11 @@ namespace CVManager.WebApplication.Controllers
 
                 if (user != null) //Checkar ifall ett senderCVId ska finnas. Ifall en ej inloggad person skickar ett meddelande ska det inte finnas
                 {
+
+                    var senderName = cVContext.Users
+                  .Where(u => u.Id == senderCV.UserId)
+                  .FirstOrDefault(); //Välj namn som skickat har
+
                     message.CVSentId = senderCVId;
                     message.SendersName = (senderName.FirstName + " " + senderName.LastName);
                     message.RecieversName = (userRecieve.FirstName + " " + userRecieve.LastName);

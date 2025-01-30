@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
+using System.IO.Compression;
 using System.Linq;
 using CVManager.DAL.Context;
 using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -88,8 +90,7 @@ namespace CVManager.WebApplication.Controllers
                         Console.WriteLine("Funkar");
 
                         var cv = new CV //Skapar nytt CV kopplat till användaren
-                        {
-                            ProfilePicturePath = null, 
+                        { 
                             Summary = "",
                             UserId = user.Id
                         };
@@ -236,7 +237,7 @@ namespace CVManager.WebApplication.Controllers
            CVAltViewModel cVAltViewModel = new CVAltViewModel();
             
             cVAltViewModel.Summary = cv.Summary;
-            cVAltViewModel.ProfilePicturePath = cv.ProfilePicturePath;
+            //cVAltViewModel.ProfilePicturePath = cv.ProfilePicturePath;
             
             //Skapar en viewmodel med överensstämmande data
 
@@ -259,11 +260,21 @@ namespace CVManager.WebApplication.Controllers
                 }
                 var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
-                string fileName = cVAltViewModel.ProfilePicturePath;
-                cv.ProfilePicturePath = "/uploads/" + fileName;
+                // Spara uppladad bild
+                using (var memoryStream = new MemoryStream())
+                {
+                    await cVAltViewModel.FileUpload.FormFile.CopyToAsync(memoryStream);
 
-
-               
+                    // Upload the file if less than 2 MB
+                    if (memoryStream.Length < 2097152)
+                    {
+                        cv.ProfilePicture = memoryStream.ToArray();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("File", "The file is too large.");
+                    }
+                }
 
                 var existingSkill = await cVContext.Skills
                  .FirstOrDefaultAsync(s => s.SkillName == cVAltViewModel.SkillName && s.CVId == cv.CVId);
@@ -381,9 +392,8 @@ namespace CVManager.WebApplication.Controllers
                 }
 
 
-
                 cv.Summary = cVAltViewModel.Summary;
-                cv.ProfilePicturePath=cv.ProfilePicturePath;
+                //cv.ProfilePicturePath=cv.ProfilePicturePath;
                 
                 cVContext.CVs.Update(cv);
                 await cVContext.SaveChangesAsync();

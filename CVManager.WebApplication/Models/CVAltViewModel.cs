@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace CVManager.WebApplication.Models
 {
@@ -6,17 +7,12 @@ namespace CVManager.WebApplication.Models
     {
         [Required(ErrorMessage = "Vänligen skriv en text om ditt cv.")]
         public string? Summary { get; set; }
-
         public string? Institution { get; set; }
         public string? Role { get; set; }
         public string? EducationName { get; set; }
         public string? SkillName { get; set; }
-
         public string? CompanyName   { get; set; }
-
-        public string? ProfilePicturePath { get; set; }
-
+        [BindProperty]
+        public BufferedSingleFileUploadDb? FileUpload { get; set; }
     }
-
-
 }

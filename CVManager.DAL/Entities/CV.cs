@@ -11,22 +11,14 @@ namespace CVManager.DAL.Entities
    public class CV
     {
         public int CVId { get; set; }
-
-        
-        public string? ProfilePicturePath { get; set; }
+        public byte[]? ProfilePicture { get; set; }
         public string Summary { get; set; }
-
         public string UserId { get; set; }
-
         public virtual ICollection<Skill> Skills { get; set; }
         public virtual ICollection<Experience> Experiences { get; set; }
         public virtual ICollection<Education> Educations { get; set; }
-
-        public User User { get; set; } = null!;
-        
-        //För att kunna navigera många till många förhållandet. cv - cvproject - project. 
+        public User User { get; set; } = null!;       
         public virtual ICollection<CVProject> CVProjects { get; set; }
-
         public virtual ICollection<Message> Messages { get; set; }
 
     }

@@ -22,10 +22,18 @@
     {
         <p><strong>User information is missing.</strong></p>
     }
-
     @{
-        var base64 = Convert.ToBase64String(Model.CV.ProfilePicture);
-        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+        string imgSrc = string.Empty;
+        if (Model.CV.ProfilePicture != null)
+        {
+            var base64 = Convert.ToBase64String(Model.CV.ProfilePicture);
+            imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+        }
+        else
+        {
+            // Base64 string for a 1x1 transparent placeholder image (1x1 pixel GIF)
+            imgSrc = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+        }
     }
     <img src="@imgSrc" alt="Profile Picture" style="width: 150px; height: 150px;" />
 

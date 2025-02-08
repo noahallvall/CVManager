@@ -215,14 +215,12 @@ namespace CVManager.WebApplication.Controllers
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
 
             var allaProjekt = cVContext.Projects
-                .Include(p => p.CVProjects) // Ladda sambandstabellen
-                .ThenInclude(cp => cp.CV) // Ladda CV:n kopplade till projektet
-                .ThenInclude(cv => cv.User) // Ladda användare kopplade till CV:n
-                .Where(p => p.CVProjects.Any(cp =>
-                    !cp.CV.User.IsPrivateProfile.HasValue ||
-                    !cp.CV.User.IsPrivateProfile.Value ||
-                    IsAuthenticated)) // Filtrera bort projekt kopplade till privata profiler
-
+                .Include(p => p.CVProjects) // Load link table
+                .ThenInclude(cp => cp.CV) // Load associated CVs
+                .ThenInclude(cv => cv.User) // Load users linked to CVs
+                .Where(p => IsAuthenticated ||  // Show all projects if logged in
+                    p.CVProjects.All(cp => !cp.CV.User.IsPrivateProfile.HasValue ||
+                                           !cp.CV.User.IsPrivateProfile.Value)) // Guests only see fully public projects
                 .Select(p => new VisaProjektViewModel
                 {
                     ProjectID = p.ProjectId,
@@ -230,11 +228,10 @@ namespace CVManager.WebApplication.Controllers
                     ProjectDescription = p.ProjectDescription,
                     UploadDate = p.UploadDate,
                     UsersInProject = p.CVProjects
-                        .Select(cp => cp.CV.User.UserName) // Hämta användarnamn på användare
-                        .ToList() // Konvertera till lista
+                        .Select(cp => cp.CV.User.UserName) // Get usernames of users in project
+                        .ToList() // Convert to list
                 })
                 .ToList();
-
             return View(allaProjekt);
         }
 

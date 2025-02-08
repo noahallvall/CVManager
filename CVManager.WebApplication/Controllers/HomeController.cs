@@ -48,19 +48,22 @@ namespace CVManager.WebApplication.Controllers
                 .Where(cv => !cv.User.IsPrivateProfile.HasValue || !cv.User.IsPrivateProfile.Value || isAuthenticated)
                 .ToList();
 
-            var projectList= CVContext.CVs
+          
 
-                .Include(cv => cv.User) // Ladda användarinformation
-                .Include(cv => cv.CVProjects) // Ladda sambandstabellen
-                .ThenInclude(cp => cp.Project) // Ladda kopplade projekt
+            var projectList = CVContext.CVs
+                .Include(cv => cv.User) // Load user information
+                .Include(cv => cv.CVProjects) // Load the linking table
+                .ThenInclude(cp => cp.Project) // Load associated projects
+                .Where(cv => !cv.User.IsPrivateProfile.HasValue || !cv.User.IsPrivateProfile.Value || isAuthenticated) // Exclude private profiles if not authenticated
                 .ToList();
 
-            var sortedProjects = projectList
-                 .SelectMany(cv => cv.CVProjects)
-                 .Where(cp => cp.Project != null) 
-                 .Select(cp => cp.Project) 
-                 .OrderByDescending(p => p.UploadDate) 
-                 .ToList();
+
+             var sortedProjects = CVContext.Projects
+                     .Where(p => isAuthenticated ||  // If user is logged in, show all projects
+                         p.CVProjects.All(cp => !cp.CV.User.IsPrivateProfile.HasValue ||
+                                                !cp.CV.User.IsPrivateProfile.Value)) // If guest, show only fully public projects
+                     .OrderByDescending(p => p.UploadDate)
+                     .ToList();
 
             // Skapa och fyll HomeViewModel
             var homeViewModel = new HomeViewModel

@@ -20,8 +20,10 @@
         </form>
     </div>
 }
+<div class ="Rubrik">
+    <h1>Welcome to your very own CVManager!</h1>
+</div>
 
-<h1>CVs och senast upplagda projekt</h1>
 
 <div class="cv-container">
     @foreach (var cv in Model.CVs.Take(4))
@@ -81,7 +83,7 @@
 </div>
 
 
-<h3>Projekt</h3>
+<h3>Projects</h3>
 
 <div class="project-container">
     @foreach (var project in Model.Projects.Take(4))
@@ -109,10 +111,10 @@
         margin: 0;
         padding: 0;
         text-align: left;
-        background-color: antiquewhite;
+       
     }
 
-    .h1{
+    .Rubrik{
         text-align:center;
         top:5vh;
     }
@@ -123,24 +125,21 @@
 
     .cv-container {
         display: grid;
-        grid-template-columns: repeat(2, 35vw); 
-        gap: 1vw; 
-        width: 100%;
-        justify-content: center; 
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); /* Flexible columns */
+        gap: 2vw; /* Scalable space between items */
+        width: 100%; /* Full container width */
+        justify-content: center; /* Center items */
     }
 
-
-   
     .project-container {
         display: grid;
-        grid-template-columns: repeat(2, 25vw); 
-        gap: 1vw; 
-        width: 100%;
-        margin: 0 auto; 
-        padding: 3vh; 
+        grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); /* Flexible columns */
+        gap: 2vw; /* Scalable space between items */
+        width: 100%; /* Full container width */
+        margin: 0 auto;
+        padding: 4vh; /* Scalable padding */
         box-sizing: border-box;
-        margin-top: 5vh; 
+        margin-top: 5vh; /* Scalable top margin */
     }
-
 </style>
 

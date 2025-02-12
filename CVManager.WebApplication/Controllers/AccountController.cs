@@ -261,21 +261,23 @@ namespace CVManager.WebApplication.Controllers
                 var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
                 // Spara uppladad bild
-                using (var memoryStream = new MemoryStream())
+                if (cVAltViewModel.FileUpload != null && cVAltViewModel.FileUpload.FormFile != null)
                 {
-                    await cVAltViewModel.FileUpload.FormFile.CopyToAsync(memoryStream);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await cVAltViewModel.FileUpload.FormFile.CopyToAsync(memoryStream);
 
-                    // Upload the file if less than 2 MB
-                    if (memoryStream.Length < 2097152)
-                    {
-                        cv.ProfilePicture = memoryStream.ToArray();
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("File", "The file is too large.");
+                        // Upload the file if it's less than 2 MB
+                        if (memoryStream.Length < 2097152)
+                        {
+                            cv.ProfilePicture = memoryStream.ToArray();
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("File", "The file is too large.");
+                        }
                     }
                 }
-
                 var existingSkill = await cVContext.Skills
                  .FirstOrDefaultAsync(s => s.SkillName == cVAltViewModel.SkillName && s.CVId == cv.CVId);
                 
@@ -534,6 +536,7 @@ namespace CVManager.WebApplication.Controllers
                     Console.WriteLine("Ej inloggad");
                     return NotFound();
                 }  
+
             }
 
 
@@ -550,18 +553,27 @@ namespace CVManager.WebApplication.Controllers
             return View(allaProjekt);
         }
 
-        
+
         [HttpGet]
-        public IActionResult ChangeProject(int id)
+        public async Task<IActionResult> ChangeProject(int id)
         {
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             Console.WriteLine($"Project ID: {id}");
 
-            var projekt = cVContext.Projects.FirstOrDefault(p => p.ProjectId == id); //Hämtar projektId utifrån id i parameter
+            var projekt = await cVContext.Projects.FirstOrDefaultAsync(p => p.ProjectId == id); // Fetch project based on the id
 
             if (projekt == null)
             {
                 return NotFound();
+            }
+
+           
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null || projekt.ownerId != user.Id) 
+            {
+                TempData["ErrorMessage"] = "You do not have the authority to change contents of this project."; 
+                return RedirectToAction("Index", "Home");
             }
 
             ChangeProjectViewModel changeProjectViewModel = new ChangeProjectViewModel
@@ -571,14 +583,14 @@ namespace CVManager.WebApplication.Controllers
                 ProjectName = projekt.ProjectName
             };
 
-            return View(changeProjectViewModel); 
+            return View(changeProjectViewModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> ChangeProject(ChangeProjectViewModel changeProjectViewModel)
         {
+            Console.WriteLine("Aktivt Projekt =" + changeProjectViewModel.ProjectId.ToString());
 
-            Console.WriteLine("Aktivt Projekt =" + changeProjectViewModel.ProjectId.ToString() );
             if (ModelState.IsValid)
             {
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
@@ -587,14 +599,15 @@ namespace CVManager.WebApplication.Controllers
                 }
 
                 var projekt = await cVContext.Projects.FirstOrDefaultAsync(p => p.ProjectId == changeProjectViewModel.ProjectId);
-                // Hämtar projekt utifrån det projekts id som valts/sparats i viewmodel
 
                 if (projekt == null)
                 {
                     Console.WriteLine("Projektet hittades inte.");
                 }
 
-                projekt.ProjectName =changeProjectViewModel.ProjectName;
+
+                // Update project details
+                projekt.ProjectName = changeProjectViewModel.ProjectName;
                 projekt.ProjectDescription = changeProjectViewModel.ProjectDescription;
 
                 cVContext.Projects.Update(projekt);
@@ -603,9 +616,9 @@ namespace CVManager.WebApplication.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-
             return View(changeProjectViewModel);
         }
+
 
 
     }

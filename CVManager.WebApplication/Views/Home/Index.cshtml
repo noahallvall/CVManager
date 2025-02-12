@@ -7,6 +7,16 @@
 
 *@
 
+
+@if (TempData["ErrorMessage"] != null)
+    {
+        <script type="text/javascript">
+            alert('@TempData["ErrorMessage"]'); 
+        </script>
+    }
+
+
+
 @if(User.Identity.IsAuthenticated)
 {
     <div class="Inlogg"> 

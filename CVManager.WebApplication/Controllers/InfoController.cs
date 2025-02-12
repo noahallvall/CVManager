@@ -61,6 +61,15 @@ namespace CVManager.WebApplication.Controllers
 
                 var user = await cVContext.Users.FindAsync(cv.UserId);
 
+                var userLoggedin = await userManager.GetUserAsync(User);
+
+                if (userLoggedin == null && cv.User.IsPrivateProfile == true) 
+                {
+                    TempData["ErrorMessage"] = "You do not have the authority to view this CV.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+
                 // Map data to the view model
                 var cvViewModel = new CvViewModel
                 {

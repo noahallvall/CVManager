@@ -4,6 +4,7 @@ using System.Linq;
 using CVManager.DAL.Context;
 using CVManager.DAL.Entities;
 using CVManager.WebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +45,7 @@ namespace CVManager.WebApplication.Controllers
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(loginViewModel.AnvandarNamn, loginViewModel.Losenord, 
+                var result = await signInManager.PasswordSignInAsync(loginViewModel.AnvandarNamn, loginViewModel.Losenord,
                     isPersistent: loginViewModel.RememberMe, lockoutOnFailure: false);
 
 
@@ -90,7 +91,7 @@ namespace CVManager.WebApplication.Controllers
                         Console.WriteLine("Funkar");
 
                         var cv = new CV //Skapar nytt CV kopplat till användaren
-                        { 
+                        {
                             Summary = "",
                             UserId = user.Id
                         };
@@ -140,7 +141,7 @@ namespace CVManager.WebApplication.Controllers
                 Address = user?.Address,
                 Email = user?.Email,
                 Phone = user?.Phone
-                
+
             };
 
             return View(kontoAltViewModel);
@@ -166,7 +167,7 @@ namespace CVManager.WebApplication.Controllers
             if (!passwordCheck)
             {
                 ModelState.AddModelError("CurrentPassword", "Nuvarande lösenord är felinmatat.");
-                return View(kontoAltViewModel); 
+                return View(kontoAltViewModel);
             }
 
             if (!string.IsNullOrEmpty(kontoAltViewModel.Losenord)) //Kodblock för att kolla ifall det inmatade lösenordet är null eller tomt, då ska ingen ändring av lösenordet ske
@@ -196,7 +197,7 @@ namespace CVManager.WebApplication.Controllers
 
             if (updateResult.Succeeded)
             {
-                return RedirectToAction("Index", "Home"); 
+                return RedirectToAction("Index", "Home");
             }
 
             foreach (var error in updateResult.Errors)
@@ -204,7 +205,7 @@ namespace CVManager.WebApplication.Controllers
                 Console.WriteLine($"Error: {error}");
             }
 
-            return View(kontoAltViewModel); 
+            return View(kontoAltViewModel);
         }
 
         [HttpGet]
@@ -223,7 +224,7 @@ namespace CVManager.WebApplication.Controllers
             var cv = await cVContext.CVs
                 .FirstOrDefaultAsync(c => c.UserId == userId); //Hämtar alla CV som hör till användare som hämtats tidigare
 
-            
+
 
             var skill = await cVContext.Skills
                 .FirstOrDefaultAsync(c => c.CVId == cv.CVId); //Hämtar skills som hör till CV
@@ -234,11 +235,11 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound(); // Eller hantera detta
             }
 
-           CVAltViewModel cVAltViewModel = new CVAltViewModel();
-            
+            CVAltViewModel cVAltViewModel = new CVAltViewModel();
+
             cVAltViewModel.Summary = cv.Summary;
             //cVAltViewModel.ProfilePicturePath = cv.ProfilePicturePath;
-            
+
             //Skapar en viewmodel med överensstämmande data
 
 
@@ -251,7 +252,7 @@ namespace CVManager.WebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await userManager.GetUserAsync (User);
+                var user = await userManager.GetUserAsync(User);
 
                 if (user == null)
                 {
@@ -280,7 +281,7 @@ namespace CVManager.WebApplication.Controllers
                 }
                 var existingSkill = await cVContext.Skills
                  .FirstOrDefaultAsync(s => s.SkillName == cVAltViewModel.SkillName && s.CVId == cv.CVId);
-                
+
 
                 var existingEdNa = await cVContext.Educations
                  .FirstOrDefaultAsync(s => s.EducationName == cVAltViewModel.EducationName && s.CVId == cv.CVId);
@@ -296,14 +297,14 @@ namespace CVManager.WebApplication.Controllers
 
                 if (existingSkill == null)
                 {
-                    
+
                     //skapar objekt
                     Skill skill = new Skill()
                     {
                         SkillName = cVAltViewModel.SkillName,
                         CVId = cv.CVId
-                        
-                        
+
+
                     };//tittar ifall skillfältet skrevs in
                     if (cVAltViewModel.SkillName == null)
                     {
@@ -313,19 +314,19 @@ namespace CVManager.WebApplication.Controllers
                     {//sparar skill
                         cVContext.Skills.Update(skill);
                         await cVContext.SaveChangesAsync();
-                       
+
 
                     }
-                    
 
-                   
+
+
                 }
                 else
                 {
                     Console.WriteLine("Färdigheten finns redan i CV:t");
                 }
 
-                if(existingEdNa == null || existingEdIn == null) //kollar ifall det redan existerar i cvt
+                if (existingEdNa == null || existingEdIn == null) //kollar ifall det redan existerar i cvt
                 {
 
 
@@ -337,7 +338,7 @@ namespace CVManager.WebApplication.Controllers
                         CVId = cv.CVId
 
                     };
-                    if (cVAltViewModel.Institution == null && cVAltViewModel.EducationName ==null) //tittar fall fälten skrevs in
+                    if (cVAltViewModel.Institution == null && cVAltViewModel.EducationName == null) //tittar fall fälten skrevs in
                     {
                         Console.WriteLine("Inget hände");
                     }
@@ -345,10 +346,10 @@ namespace CVManager.WebApplication.Controllers
                     {
                         cVContext.Educations.Update(education);
                         await cVContext.SaveChangesAsync();
-                        
+
 
                     }
-                    
+
                 }
                 else
                 {
@@ -356,7 +357,7 @@ namespace CVManager.WebApplication.Controllers
                 }
 
 
-                if(existingExCoNa  ==null || existingExCoRo == null )
+                if (existingExCoNa == null || existingExCoRo == null)
                 {
                     Experience experience = new Experience()
                     {
@@ -374,10 +375,10 @@ namespace CVManager.WebApplication.Controllers
                     {
                         cVContext.Experiences.Update(experience);
                         await cVContext.SaveChangesAsync();
-                        
+
 
                     }
-                    
+
 
                 }
                 else
@@ -389,14 +390,14 @@ namespace CVManager.WebApplication.Controllers
 
                 if (cv == null)
                 {
-                    Console.WriteLine("CV kan ej hittas"); 
+                    Console.WriteLine("CV kan ej hittas");
                     return NotFound();
                 }
 
 
                 cv.Summary = cVAltViewModel.Summary;
                 //cv.ProfilePicturePath=cv.ProfilePicturePath;
-                
+
                 cVContext.CVs.Update(cv);
                 await cVContext.SaveChangesAsync();
 
@@ -442,10 +443,10 @@ namespace CVManager.WebApplication.Controllers
                 Console.WriteLine("Inga färdigheter att ta bort.");
             }
 
-            
-            return RedirectToAction("CVAlt", "Account"); 
+
+            return RedirectToAction("CVAlt", "Account");
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> CVAltTaBortEducations(CVAltViewModel cVAltViewModel)
         {
@@ -457,7 +458,7 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound();
             }
 
-            
+
             var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
             if (cv == null)
@@ -466,20 +467,20 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound();
             }
 
-            
+
             var EducationsToRemove = await cVContext.Educations
                 .Where(s => s.CVId == cv.CVId)
                 .ToListAsync();
 
             if (EducationsToRemove.Any())
             {
-                
+
                 cVContext.Educations.RemoveRange(EducationsToRemove);
                 await cVContext.SaveChangesAsync();
-                
+
             }
 
-            
+
             return RedirectToAction("CVAlt", "Account");
         }
 
@@ -494,7 +495,7 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound();
             }
 
-            
+
             var cv = await cVContext.CVs.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
             if (cv == null)
@@ -503,14 +504,14 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound();
             }
 
-            
+
             var ExperiencesToRemove = await cVContext.Experiences
                 .Where(s => s.CVId == cv.CVId)
                 .ToListAsync();
 
             if (ExperiencesToRemove.Any())
             {
-               
+
                 cVContext.Experiences.RemoveRange(ExperiencesToRemove);
                 await cVContext.SaveChangesAsync();
             }
@@ -535,7 +536,7 @@ namespace CVManager.WebApplication.Controllers
                 {
                     Console.WriteLine("Ej inloggad");
                     return NotFound();
-                }  
+                }
 
             }
 
@@ -567,12 +568,12 @@ namespace CVManager.WebApplication.Controllers
                 return NotFound();
             }
 
-           
+
             var user = await userManager.GetUserAsync(User);
 
-            if (user == null || projekt.ownerId != user.Id) 
+            if (user == null || projekt.ownerId != user.Id)
             {
-                TempData["ErrorMessage"] = "You do not have the authority to change contents of this project."; 
+                TempData["ErrorMessage"] = "You do not have the authority to change contents of this project.";
                 return RedirectToAction("Index", "Home");
             }
 

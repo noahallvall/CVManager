@@ -59,7 +59,7 @@ namespace CVManager.WebApplication.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                var user = await cVContext.Users.FindAsync(cv.UserId);
+                var userCurrentCV = await cVContext.Users.FindAsync(cv.UserId);
 
                 var userLoggedin = await userManager.GetUserAsync(User);
 
@@ -73,7 +73,7 @@ namespace CVManager.WebApplication.Controllers
                 // Map data to the view model
                 var cvViewModel = new CvViewModel
                 {
-                    User = user,
+                    User = userCurrentCV,
                     CV = cv
                 };
 
@@ -219,30 +219,36 @@ namespace CVManager.WebApplication.Controllers
         [HttpGet]
         public IActionResult VisaProjekt()
         {
-            var IsAuthenticated = User.Identity.IsAuthenticated;
-
+            var isAuthenticated = User.Identity.IsAuthenticated;
             ViewBag.Antal = GlobalData.OlastaMeddelandenCount.ToString();
 
             var allaProjekt = cVContext.Projects
-                .Include(p => p.CVProjects) // Load link table
-                .ThenInclude(cp => cp.CV) // Load associated CVs
-                .ThenInclude(cv => cv.User) // Load users linked to CVs
-                .Where(p => IsAuthenticated ||  // Show all projects if logged in
-                    p.CVProjects.All(cp => !cp.CV.User.IsPrivateProfile.HasValue ||
-                                           !cp.CV.User.IsPrivateProfile.Value)) // Guests only see fully public projects
+                .Include(p => p.CVProjects)
+                    .ThenInclude(cp => cp.CV)
+                        .ThenInclude(cv => cv.User)
                 .Select(p => new VisaProjektViewModel
                 {
                     ProjectID = p.ProjectId,
                     ProjectName = p.ProjectName,
                     ProjectDescription = p.ProjectDescription,
                     UploadDate = p.UploadDate,
-                    UsersInProject = p.CVProjects
-                        .Select(cp => cp.CV.User.UserName) // Get usernames of users in project
-                        .ToList() // Convert to list
+
+                    UsersInProject = isAuthenticated
+                        ? p.CVProjects
+                            .Where(cp => cp.CV != null && cp.CV.User != null)
+                            .Select(cp => cp.CV.User.UserName)
+                            .ToList()
+                        : p.CVProjects
+                            .Where(cp => cp.CV != null && cp.CV.User != null &&
+                                        (!cp.CV.User.IsPrivateProfile.HasValue || !cp.CV.User.IsPrivateProfile.Value))
+                            .Select(cp => cp.CV.User.UserName)
+                            .ToList()
                 })
                 .ToList();
+
             return View(allaProjekt);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Message(string id)
